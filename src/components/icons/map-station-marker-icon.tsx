@@ -2,11 +2,11 @@
 "use client";
 
 import type { StationType } from "@/types";
-import { Bolt } from "lucide-react";
+// Lucide Bolt is no longer needed as we are using a custom SVG path.
 
 interface MapStationMarkerIconProps {
   type: StationType; // This prop is received but not used to determine the icon shape for map markers.
-                     // We make all map icons use the Bolt symbol for consistency.
+                     // We make all map icons use the same lightning bolt symbol for consistency, per user request.
   size: number;           // Overall diameter of the marker
   symbolColor: string;    // Color for the inner symbol (e.g., orange)
   circleFillColor: string; // Fill color of the main circle (e.g., white)
@@ -14,34 +14,27 @@ interface MapStationMarkerIconProps {
 }
 
 export function MapStationMarkerIcon({
-  // 'type' prop is passed from StationMarker but we always use Bolt here.
+  // 'type' prop is passed but not used for the icon shape, ensuring all map markers are visually consistent.
   size,
   symbolColor,
   circleFillColor,
   circleStrokeColor,
 }: MapStationMarkerIconProps) {
-  // Always use the Bolt icon for all station types on the map,
-  // to match the user's request for uniform icons based on the provided image.
-  const InnerIconComponent = Bolt;
-
   // Define thickness for the outer circle's stroke
   const circleStrokeThickness = Math.max(1.5, size / 12);
   // Define size for the inner symbol (lightning bolt).
-  // Increased from 0.55 to 0.75 to make the bolt more prominent.
+  // 75% of the marker size makes the bolt prominent.
   const innerSymbolSize = size * 0.75;
 
   // Calculate position to center the symbol
   const symbolX = (size - innerSymbolSize) / 2;
   const symbolY = (size - innerSymbolSize) / 2;
-  // Define stroke width for the inner Lucide symbol itself.
-  // Set to 1 for a cleaner, more "filled" look when stroke and fill are the same color.
-  const symbolItselfStrokeWidth = 1;
 
   return (
     <svg
       width={size}
       height={size}
-      viewBox={`0 0 ${size} ${size}`}
+      viewBox={`0 0 ${size} ${size}`} // Outer SVG matches the marker size
       xmlns="http://www.w3.org/2000/svg"
       style={{ display: 'block' }} // Ensures proper rendering as a marker
     >
@@ -53,14 +46,18 @@ export function MapStationMarkerIcon({
         stroke={circleStrokeColor}
         strokeWidth={circleStrokeThickness}
       />
-      {/* Group for positioning the inner Lucide icon */}
+      {/* Group for positioning the inner SVG symbol */}
       <g transform={`translate(${symbolX}, ${symbolY})`}>
-        <InnerIconComponent
-          color={symbolColor} // Sets the stroke color for Lucide icons (orange)
-          fill={symbolColor}   // Explicitly fill the icon with the symbol color (orange)
-          size={innerSymbolSize}
-          strokeWidth={symbolItselfStrokeWidth} // Use a thin stroke for a solid filled look
-        />
+        <svg
+          width={innerSymbolSize}
+          height={innerSymbolSize}
+          viewBox="0 0 24 24" // Standard viewBox for the chosen zigzag lightning bolt path
+          fill={symbolColor}   // Symbol color applied as fill
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          {/* Zigzag lightning bolt path */}
+          <path d="M7 21L10.2632 13H6L17 3L13.7368 11H18L7 21Z" />
+        </svg>
       </g>
     </svg>
   );
