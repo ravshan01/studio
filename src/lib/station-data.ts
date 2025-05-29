@@ -56,5 +56,60 @@ export const mockStations: Station[] = [
     ],
     operator: "ChargeNet",
     openingHours: "24/7",
+  },
+  {
+    id: "station-5",
+    name: "Yunusabad EcoCharge",
+    address: "7 Amir Temur Avenue, Yunusabad District, Tashkent",
+    latitude: 41.3450,
+    longitude: 69.2880,
+    type: "AC",
+    ports: [
+      { id: "p5-1", type: "Type 2", powerKW: 22, status: "available", pricePerKWh: 1600 },
+      { id: "p5-2", type: "Type 2", powerKW: 11, status: "occupied", pricePerKWh: 1400 }
+    ],
+    operator: "Tashkent Charge",
+    openingHours: "24/7",
+  },
+  {
+    id: "station-6",
+    name: "Chilonzor QuickPower",
+    address: "1 Lutfi Street, Chilonzor District, Tashkent",
+    latitude: 41.2775,
+    longitude: 69.2021,
+    type: "DC",
+    ports: [
+      { id: "p6-1", type: "CCS", powerKW: 75, status: "available", pricePerKWh: 2900 }
+    ],
+    operator: "ElectroCar",
+    openingHours: "07:00 - 23:00",
+  },
+  {
+    id: "station-7",
+    name: "Mirzo Ulugbek Innovation Hub EV",
+    address: "22 Ibrat St, Mirzo Ulugbek District, Tashkent",
+    latitude: 41.3220,
+    longitude: 69.3300,
+    type: "Hybrid",
+    ports: [
+      { id: "p7-1", type: "CHAdeMO", powerKW: 40, status: "out_of_order", pricePerKWh: 2000 },
+      { id: "p7-2", type: "Type 2", powerKW: 22, status: "available", pricePerKWh: 1500 }
+    ],
+    operator: "UzCharge",
+    openingHours: "Mon-Fri 09:00 - 18:00",
+  },
+  {
+    id: "station-8",
+    name: "Sergeli Bazaar EV Point",
+    address: "Sergeli Dehqon Bozori, Sergeli District, Tashkent",
+    latitude: 41.2250,
+    longitude: 69.2080,
+    type: "AC",
+    ports: [
+      { id: "p8-1", type: "Type 1", powerKW: 7.4, status: "available", pricePerKWh: 1000 },
+      { id: "p8-2", type: "Type 2", powerKW: 7.4, status: "available", pricePerKWh: 1000 }
+    ],
+    operator: "Local Power",
+    openingHours: "06:00 - 20:00",
   }
 ];

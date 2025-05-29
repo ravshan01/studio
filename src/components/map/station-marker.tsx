@@ -39,7 +39,7 @@ export function StationMarker({ station, onClick }: StationMarkerProps) {
     }
     
     // Calculate iconColor based on the current theme inside useMemo, as it's a dependency
-    const currentIconColor = theme === 'dark' ? "#FFFFFF" : "#2B3035"; 
+    const currentIconColor = "#B8860B"; // DarkGoldenrod for a dark yellow icon
 
     const iconComponent = <StationTypeIcon type={station.type} size={iconSize} color={currentIconColor} />;
     const svgString = ReactDOMServer.renderToStaticMarkup(iconComponent);
@@ -64,7 +64,7 @@ export function StationMarker({ station, onClick }: StationMarkerProps) {
       // Fallback to a simple character if URL creation fails
       return station.type.charAt(0).toUpperCase() || '?';
     }
-  }, [station.type, theme, iconSize]); // Dependencies: station.type, theme (for iconColor), and iconSize
+  }, [station.type, iconSize]); // Dependencies: station.type, and iconSize. Theme removed as icon color is now fixed.
 
   return (
     <AdvancedMarker
