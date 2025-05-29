@@ -111,5 +111,63 @@ export const mockStations: Station[] = [
     ],
     operator: "Local Power",
     openingHours: "06:00 - 20:00",
+  },
+  {
+    id: "station-9",
+    name: "Magic City Park Charger",
+    address: "Magic City Park, Babur Street, Tashkent",
+    latitude: 41.2922, // Approximate location
+    longitude: 69.2487, // Approximate location
+    type: "DC",
+    ports: [
+      { id: "p9-1", type: "CCS", powerKW: 75, status: "available", pricePerKWh: 2800 },
+      { id: "p9-2", type: "CCS", powerKW: 75, status: "occupied", pricePerKWh: 2800 },
+    ],
+    operator: "ElectroCar",
+    openingHours: "10:00 - 23:00",
+  },
+  {
+    id: "station-10",
+    name: "Next Shopping Mall AC Point",
+    address: "Next Mall, Bobur Street, Yakkasaray District, Tashkent",
+    latitude: 41.2865, // Approximate location
+    longitude: 69.2495, // Approximate location
+    type: "AC",
+    ports: [
+      { id: "p10-1", type: "Type 2", powerKW: 22, status: "available", pricePerKWh: 1500 },
+      { id: "p10-2", type: "Type 2", powerKW: 22, status: "available", pricePerKWh: 1500 },
+      { id: "p10-3", type: "Type 2", powerKW: 11, status: "out_of_order", pricePerKWh: 1400 },
+    ],
+    operator: "UzCharge",
+    openingHours: "24/7",
+  },
+  {
+    id: "station-11",
+    name: "Grand Mir Hotel EV Stop",
+    address: "2 Mirabad Street, Tashkent", // Grand Mir Hotel actual address
+    latitude: 41.29801, // More precise for Grand Mir
+    longitude: 69.26800, // More precise for Grand Mir
+    type: "Hybrid",
+    ports: [
+      { id: "p11-1", type: "CCS", powerKW: 50, status: "available", pricePerKWh: 3000 },
+      { id: "p11-2", type: "Type 2", powerKW: 22, status: "available", pricePerKWh: 1800 },
+    ],
+    operator: "ChargeNet",
+    openingHours: "24/7",
+  },
+  {
+    id: "station-12",
+    name: "Chorsu Bazaar Public Charging",
+    address: "Near Chorsu Bazaar, Sagban Street, Old City, Tashkent",
+    latitude: 41.3265, // Approximate for Chorsu Bazaar
+    longitude: 69.2372, // Approximate for Chorsu Bazaar
+    type: "AC",
+    ports: [
+      { id: "p12-1", type: "Type 1", powerKW: 7.4, status: "available", pricePerKWh: 1200 },
+      { id: "p12-2", type: "Type 2", powerKW: 11, status: "available", pricePerKWh: 1300 },
+      { id: "p12-3", type: "Type 2", powerKW: 7.4, status: "occupied", pricePerKWh: 1200 },
+    ],
+    operator: "Tashkent Charge",
+    openingHours: "07:00 - 19:00",
   }
 ];
