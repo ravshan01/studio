@@ -2,7 +2,7 @@
 "use client";
 
 import type { StationType } from "@/types";
-import { Bolt } from "lucide-react"; // Only Bolt is needed for the map marker icon
+import { Bolt } from "lucide-react";
 
 interface MapStationMarkerIconProps {
   type: StationType; // This prop is received but not used to determine the icon shape for map markers.
@@ -14,7 +14,7 @@ interface MapStationMarkerIconProps {
 }
 
 export function MapStationMarkerIcon({
-  // 'type' prop is passed from StationMarker but we always use Bolt here
+  // 'type' prop is passed from StationMarker but we always use Bolt here.
   size,
   symbolColor,
   circleFillColor,
@@ -26,14 +26,16 @@ export function MapStationMarkerIcon({
 
   // Define thickness for the outer circle's stroke
   const circleStrokeThickness = Math.max(1.5, size / 12);
-  // Define size for the inner symbol (lightning bolt, etc.)
-  const innerSymbolSize = size * 0.55;
+  // Define size for the inner symbol (lightning bolt).
+  // Increased from 0.55 to 0.75 to make the bolt more prominent.
+  const innerSymbolSize = size * 0.75;
 
   // Calculate position to center the symbol
   const symbolX = (size - innerSymbolSize) / 2;
   const symbolY = (size - innerSymbolSize) / 2;
-  // Define stroke width for the inner Lucide symbol itself
-  const symbolItselfStrokeWidth = Math.max(1.5, innerSymbolSize / 12);
+  // Define stroke width for the inner Lucide symbol itself.
+  // Set to 1 for a cleaner, more "filled" look when stroke and fill are the same color.
+  const symbolItselfStrokeWidth = 1;
 
   return (
     <svg
@@ -54,10 +56,10 @@ export function MapStationMarkerIcon({
       {/* Group for positioning the inner Lucide icon */}
       <g transform={`translate(${symbolX}, ${symbolY})`}>
         <InnerIconComponent
-          color={symbolColor} // Sets the stroke color for Lucide icons
-          fill={symbolColor}   // Explicitly fill the icon with the symbol color
+          color={symbolColor} // Sets the stroke color for Lucide icons (orange)
+          fill={symbolColor}   // Explicitly fill the icon with the symbol color (orange)
           size={innerSymbolSize}
-          strokeWidth={symbolItselfStrokeWidth}
+          strokeWidth={symbolItselfStrokeWidth} // Use a thin stroke for a solid filled look
         />
       </g>
     </svg>
