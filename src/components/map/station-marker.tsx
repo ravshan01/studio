@@ -1,8 +1,10 @@
+
 "use client";
 
 import type { Station, StationType } from "@/types";
 import { AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
 import { useTheme } from "@/contexts/theme-context";
+import { StationTypeIcon } from "@/components/icons/station-type-icon"; // Import StationTypeIcon
 
 interface StationMarkerProps {
   station: Station;
@@ -10,7 +12,7 @@ interface StationMarkerProps {
 }
 
 const getMarkerColor = (type: StationType, theme: "light" | "dark") => {
-  // Using theme colors: primary for DC, accent for AC, secondary for Hybrid
+  // Using theme colors: primary for DC, accent for AC
   // Hex values for primary (#468499), accent (#FFB347)
   // A neutral secondary color might be better
   switch (type) {
@@ -28,6 +30,7 @@ const getMarkerColor = (type: StationType, theme: "light" | "dark") => {
 export function StationMarker({ station, onClick }: StationMarkerProps) {
   const { theme } = useTheme();
   const markerColor = getMarkerColor(station.type, theme);
+  const iconColor = theme === 'dark' ? "#FFFFFF" : "#2B3035";
 
   return (
     <AdvancedMarker
@@ -38,7 +41,8 @@ export function StationMarker({ station, onClick }: StationMarkerProps) {
       <Pin
         background={markerColor}
         borderColor={theme === 'dark' ? "#2B3035" : "#FFFFFF"} // Background color for border contrast
-        glyphColor={theme === 'dark' ? "#FFFFFF" : "#2B3035"}   // Contrasting glyph color
+        glyphColor={iconColor} // This will color the StationTypeIcon
+        glyph={<StationTypeIcon type={station.type} className="h-4 w-4" />} // Use StationTypeIcon as glyph
       />
     </AdvancedMarker>
   );
