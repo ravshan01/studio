@@ -1,59 +1,60 @@
 
 "use client";
 
-import type { Station, StationType } from "@/types";
+import type { Station } from "@/types";
 import { AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
 import { useTheme } from "@/contexts/theme-context";
 import { StationTypeIcon } from "@/components/icons/station-type-icon";
 import ReactDOMServer from 'react-dom/server';
-import { useMemo } from "react"; // Import useMemo
+import { useMemo } from "react";
 
 interface StationMarkerProps {
   station: Station;
   onClick: (station: Station) => void;
 }
 
-const getMarkerColor = (type: StationType, theme: "light" | "dark") => {
-  switch (type) {
-    case "DC":
-      return theme === 'dark' ? "#468499" : "#468499"; // Deep Turquoise
-    case "AC":
-      return theme === 'dark' ? "#FFB347" : "#FFB347"; // Warm Amber
-    case "Hybrid":
-      return theme === 'dark' ? "#A0AEC0" : "#718096"; // Gray
-    default:
-      return theme === 'dark' ? "#718096" : "#A0AEC0"; // Default gray
-  }
-};
+const PIN_BACKGROUND_COLOR = "#FFC107"; // Bright dark yellow
+const PIN_BORDER_COLOR_LIGHT = "#FFFFFF"; // White border for light theme
+const PIN_BORDER_COLOR_DARK = "#E0E0E0"; // Slightly off-white for dark theme for better map contrast if needed, or stick to white
+const ICON_SYMBOL_COLOR = "#FFC107"; // Yellow for the plug/bolt icon inside the white circle
 
 export function StationMarker({ station, onClick }: StationMarkerProps) {
   const { theme } = useTheme();
-  const markerColor = getMarkerColor(station.type, theme);
-  const iconSize = 14; // Size of the icon in pixels for the pin glyph
 
-  // Memoize the glyphValue to prevent re-computation on every render unless dependencies change.
+  const markerBorderColor = theme === 'dark' ? PIN_BORDER_COLOR_DARK : PIN_BORDER_COLOR_LIGHT;
+
+  // Define the overall size of the glyph (white circle + icon)
+  // This was previously `iconSize`, now it's the diameter of the white circle part of the glyph.
+  const glyphOverallSize = 16; // Adjust for desired appearance
+
   const glyphValue = useMemo(() => {
     // This logic should only run on the client
     if (typeof window === 'undefined') {
-      return undefined; // Or a placeholder character e.g. '?' for SSR if needed
+      return undefined; 
     }
     
-    // Calculate iconColor based on the current theme inside useMemo, as it's a dependency
-    const currentIconColor = "#B8860B"; // DarkGoldenrod for a dark yellow icon
-
-    const iconComponent = <StationTypeIcon type={station.type} size={iconSize} color={currentIconColor} />;
+    const iconComponent = (
+      <StationTypeIcon
+        type={station.type}
+        glyphSize={glyphOverallSize}
+        iconSymbolColor={ICON_SYMBOL_COLOR}
+      />
+    );
     const svgString = ReactDOMServer.renderToStaticMarkup(iconComponent);
 
     if (!svgString) {
       console.warn("StationMarker: ReactDOMServer.renderToStaticMarkup returned empty string for StationTypeIcon.");
-      return station.type.charAt(0).toUpperCase() || '?'; // Fallback to first letter of type or '?'
+      return station.type.charAt(0).toUpperCase() || '?'; 
     }
 
     try {
+      // Ensure string is not empty before btoa
+      if (svgString.trim() === "") {
+        console.warn("StationMarker: SVG string is empty before btoa.");
+        return station.type.charAt(0).toUpperCase() || '?';
+      }
       const base64Svg = window.btoa(svgString);
       if (!base64Svg && svgString) { 
-        // btoa can return empty string for an empty input svgString, 
-        // but if svgString is not empty and btoa is, it's an issue.
         console.warn("StationMarker: window.btoa returned empty string for a non-empty SVG.");
         return station.type.charAt(0).toUpperCase() || '?';
       }
@@ -61,10 +62,10 @@ export function StationMarker({ station, onClick }: StationMarkerProps) {
       return new URL(glyphDataUri);
     } catch (e) {
       console.error("StationMarker: Error creating URL from data URI or during btoa:", e, "\nSVG string length:", svgString.length);
-      // Fallback to a simple character if URL creation fails
       return station.type.charAt(0).toUpperCase() || '?';
     }
-  }, [station.type, iconSize]); // Dependencies: station.type, and iconSize. Theme removed as icon color is now fixed.
+  // Dependencies: station.type. glyphOverallSize and ICON_SYMBOL_COLOR are constants for this memo.
+  }, [station.type]); 
 
   return (
     <AdvancedMarker
@@ -73,9 +74,10 @@ export function StationMarker({ station, onClick }: StationMarkerProps) {
       onClick={() => onClick(station)}
     >
       <Pin
-        background={markerColor}
-        borderColor={theme === 'dark' ? "#2B3035" : "#FFFFFF"} // Contrast border
+        background={PIN_BACKGROUND_COLOR}
+        borderColor={markerBorderColor}
         glyph={glyphValue}
+        // glyphColor prop is not needed as colors are embedded in the SVG glyph
       />
     </AdvancedMarker>
   );
