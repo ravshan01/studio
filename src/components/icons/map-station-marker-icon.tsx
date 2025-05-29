@@ -2,10 +2,11 @@
 "use client";
 
 import type { StationType } from "@/types";
-import { Bolt, Zap, Blend, HelpCircle } from "lucide-react";
+import { Bolt } from "lucide-react"; // Only Bolt is needed for the map marker icon
 
 interface MapStationMarkerIconProps {
-  type: StationType;
+  type: StationType; // This prop is received but not used to determine the icon shape for map markers.
+                     // We make all map icons use the Bolt symbol for consistency.
   size: number;           // Overall diameter of the marker
   symbolColor: string;    // Color for the inner symbol (e.g., orange)
   circleFillColor: string; // Fill color of the main circle (e.g., white)
@@ -13,25 +14,21 @@ interface MapStationMarkerIconProps {
 }
 
 export function MapStationMarkerIcon({
-  type,
+  // 'type' prop is passed from StationMarker but we always use Bolt here
   size,
   symbolColor,
   circleFillColor,
   circleStrokeColor,
 }: MapStationMarkerIconProps) {
-  let InnerIconComponent;
-  switch (type) {
-    case "AC": InnerIconComponent = Bolt; break;
-    case "DC": InnerIconComponent = Zap; break;
-    case "Hybrid": InnerIconComponent = Blend; break;
-    default: InnerIconComponent = HelpCircle; break;
-  }
+  // Always use the Bolt icon for all station types on the map,
+  // to match the user's request for uniform icons based on the provided image.
+  const InnerIconComponent = Bolt;
 
   // Define thickness for the outer circle's stroke
-  const circleStrokeThickness = Math.max(1.5, size / 12); 
+  const circleStrokeThickness = Math.max(1.5, size / 12);
   // Define size for the inner symbol (lightning bolt, etc.)
-  const innerSymbolSize = size * 0.55; 
-  
+  const innerSymbolSize = size * 0.55;
+
   // Calculate position to center the symbol
   const symbolX = (size - innerSymbolSize) / 2;
   const symbolY = (size - innerSymbolSize) / 2;
@@ -58,7 +55,7 @@ export function MapStationMarkerIcon({
       <g transform={`translate(${symbolX}, ${symbolY})`}>
         <InnerIconComponent
           color={symbolColor} // Sets the stroke color for Lucide icons
-          fill={symbolColor}   // Explicitly fill the icon with the symbol color to match image
+          fill={symbolColor}   // Explicitly fill the icon with the symbol color
           size={innerSymbolSize}
           strokeWidth={symbolItselfStrokeWidth}
         />
