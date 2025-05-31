@@ -71,5 +71,9 @@
   "errorSavingStation": "Error saving station",
   "filterStations": "Filter Stations",
   "searchByNameOrAddress": "Search by name or address...",
-  "loadingStations": "Loading stations..."
+  "loadingStations": "Loading stations...",
+  "locationOnMap": "Location on Map",
+  "mapFormHelpText": "Click on the map or drag the marker to set coordinates."
 }
+
+    

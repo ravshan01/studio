@@ -71,5 +71,9 @@
   "errorSavingStation": "Stansiyani saqlashda xatolik",
   "filterStations": "Stansiyalarni filtrlash",
   "searchByNameOrAddress": "Nomi yoki manzili bo'yicha qidirish...",
-  "loadingStations": "Stansiyalar yuklanmoqda..."
+  "loadingStations": "Stansiyalar yuklanmoqda...",
+  "locationOnMap": "Xaritadagi joylashuv",
+  "mapFormHelpText": "Koordinatalarni o'rnatish uchun xaritaga bosing yoki belgini torting."
 }
+
+    

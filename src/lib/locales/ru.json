@@ -71,5 +71,9 @@
   "errorSavingStation": "Ошибка при сохранении станции",
   "filterStations": "Фильтровать станции",
   "searchByNameOrAddress": "Поиск по названию или адресу...",
-  "loadingStations": "Загрузка станций..."
+  "loadingStations": "Загрузка станций...",
+  "locationOnMap": "Местоположение на карте",
+  "mapFormHelpText": "Нажмите на карту или перетащите маркер, чтобы установить координаты."
 }
+
+    

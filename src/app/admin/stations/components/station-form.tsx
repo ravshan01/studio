@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,10 +22,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Station, Port } from "@/types";
+import type { Station } from "@/types";
 import { useLanguage } from "@/contexts/language-context";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { Map, AdvancedMarker } from "@vis.gl/react-google-maps";
+import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from "@/lib/constants";
+import { useCallback } from "react";
 
 const portSchema = z.object({
   type: z.enum(["Type 1", "Type 2", "CCS", "CHAdeMO"]),
@@ -65,8 +69,8 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
       : {
           name: "",
           address: "",
-          latitude: 41.2995,
-          longitude: 69.2401,
+          latitude: DEFAULT_MAP_CENTER.lat, // Default to Tashkent
+          longitude: DEFAULT_MAP_CENTER.lng, // Default to Tashkent
           type: "AC",
           operator: "",
           openingHours: "24/7",
@@ -78,6 +82,34 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
     control: form.control,
     name: "ports",
   });
+
+  const watchedLatitude = form.watch("latitude");
+  const watchedLongitude = form.watch("longitude");
+
+  const currentPosition = { lat: watchedLatitude, lng: watchedLongitude };
+
+  const initialMapCenter = initialData
+    ? { lat: initialData.latitude, lng: initialData.longitude }
+    : DEFAULT_MAP_CENTER;
+
+  const handleMapClick = useCallback((event: google.maps.MapMouseEvent) => {
+    if (event.detail.latLng) {
+        const lat = event.detail.latLng.lat;
+        const lng = event.detail.latLng.lng;
+        form.setValue("latitude", parseFloat(lat.toFixed(6)), { shouldValidate: true, shouldDirty: true });
+        form.setValue("longitude", parseFloat(lng.toFixed(6)), { shouldValidate: true, shouldDirty: true });
+    }
+  }, [form]);
+
+  const handleMarkerDragEnd = useCallback((event: google.maps.MapMouseEvent) => {
+      if (event.latLng) {
+          const lat = event.latLng.lat();
+          const lng = event.latLng.lng();
+          form.setValue("latitude", parseFloat(lat.toFixed(6)), { shouldValidate: true, shouldDirty: true });
+          form.setValue("longitude", parseFloat(lng.toFixed(6)), { shouldValidate: true, shouldDirty: true });
+      }
+  }, [form]);
+
 
   return (
     <Form {...form}>
@@ -151,6 +183,33 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
                 )}
               />
             </div>
+
+            <div className="space-y-2">
+                <FormLabel>{t("locationOnMap", "Location on Map")}</FormLabel>
+                <div style={{ height: "400px", width: "100%", borderRadius: "var(--radius)" }} className="overflow-hidden border bg-muted">
+                    <Map
+                        center={currentPosition.lat && currentPosition.lng ? currentPosition : initialMapCenter }
+                        zoom={initialData ? DEFAULT_MAP_ZOOM + 4 : DEFAULT_MAP_ZOOM +1}
+                        gestureHandling={"greedy"}
+                        disableDefaultUI={true}
+                        onClick={handleMapClick}
+                        mapId="station_form_map_id"
+                        className="h-full w-full"
+                    >
+                        { (watchedLatitude && watchedLongitude) && (
+                            <AdvancedMarker
+                                position={currentPosition}
+                                draggable={true}
+                                onDragEnd={handleMarkerDragEnd}
+                            />
+                        )}
+                    </Map>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                    {t("mapFormHelpText", "Click on the map or drag the marker to set coordinates.")}
+                </p>
+            </div>
+
              <div className="grid md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -284,3 +343,5 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
     </Form>
   );
 }
+
+    
