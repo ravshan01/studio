@@ -30,7 +30,10 @@ import { Map, AdvancedMarker } from "@vis.gl/react-google-maps";
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from "@/lib/constants";
 import { useCallback } from "react";
 
+const generatePortId = () => `port_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+
 const portSchema = z.object({
+  id: z.string(), // Ensure ID is part of the schema
   type: z.enum(["Type 1", "Type 2", "CCS", "CHAdeMO"]),
   powerKW: z.coerce.number().min(1, "Power must be positive"),
   status: z.enum(["available", "occupied", "out_of_order"]),
@@ -64,17 +67,17 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
     defaultValues: initialData
       ? {
           ...initialData,
-          ports: initialData.ports.map(p => ({...p})) // ensure ports are new objects
+          ports: initialData.ports.map(p => ({...p})) // ensure ports are new objects, IDs preserved
         }
       : {
           name: "",
           address: "",
-          latitude: DEFAULT_MAP_CENTER.lat, // Default to Tashkent
-          longitude: DEFAULT_MAP_CENTER.lng, // Default to Tashkent
+          latitude: DEFAULT_MAP_CENTER.lat,
+          longitude: DEFAULT_MAP_CENTER.lng,
           type: "AC",
           operator: "",
           openingHours: "24/7",
-          ports: [{ type: "Type 2", powerKW: 22, status: "available", pricePerKWh: 0 }],
+          ports: [{ id: generatePortId(), type: "Type 2", powerKW: 22, status: "available", pricePerKWh: 0 }],
         },
   });
 
@@ -323,7 +326,7 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
             <Button
               type="button"
               variant="outline"
-              onClick={() => append({ type: "Type 2", powerKW: 22, status: "available", pricePerKWh: 0 })}
+              onClick={() => append({ id: generatePortId(), type: "Type 2", powerKW: 22, status: "available", pricePerKWh: 0 })}
               className="flex items-center gap-2"
             >
               <PlusCircle className="h-4 w-4" /> {t("addPort", "Add Port")}
@@ -343,3 +346,4 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
     </Form>
   );
 }
+
