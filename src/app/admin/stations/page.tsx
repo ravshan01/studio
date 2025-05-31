@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { StationForm } from "./components/station-form";
 import { StationsTable } from "./components/stations-table";
 import type { Station } from "@/types";
-import { mockStations as initialMockStationsFromFile } from "@/lib/station-data"; // Renamed import
+import { mockStations as initialMockStationsFromFile } from "@/lib/station-data";
 import { useLanguage } from "@/contexts/language-context";
 import { PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -17,18 +17,20 @@ const STATIONS_STORAGE_KEY = "electroCarStationsData";
 
 // Helper to get stations from localStorage
 function getStoredStations(): Station[] {
-  if (typeof window === 'undefined') return [...initialMockStationsFromFile]; // SSR fallback, return a copy
+  if (typeof window === 'undefined') return [...initialMockStationsFromFile]; // SSR fallback
 
-  try {
-    const stored = localStorage.getItem(STATIONS_STORAGE_KEY);
-    if (stored) {
-      return JSON.parse(stored);
+  const stored = localStorage.getItem(STATIONS_STORAGE_KEY);
+  if (stored) {
+    try {
+      return JSON.parse(stored); // Try to parse existing data
+    } catch (error) {
+      console.error("Error parsing stations from localStorage in getStoredStations. Resetting.", error);
+      localStorage.removeItem(STATIONS_STORAGE_KEY); // Clear potentially corrupted data
+      // Fall through to re-initialize
     }
-  } catch (error) {
-    console.error("Error parsing stations from localStorage:", error);
   }
-  // If nothing in storage or error, initialize with mock data (from file) and save it
-  const initialData = [...initialMockStationsFromFile]; // Use a copy
+  // Initialize if 'stored' was null, or if parsing failed and it was cleared.
+  const initialData = [...initialMockStationsFromFile]; // Use a fresh copy
   localStorage.setItem(STATIONS_STORAGE_KEY, JSON.stringify(initialData));
   return initialData;
 }
@@ -45,7 +47,6 @@ function storeStations(stationsToStore: Station[]): void {
 
 // API simulation functions updated to use localStorage
 async function fetchStationsApi(): Promise<Station[]> {
-  // Simulate API delay
   return new Promise(resolve => setTimeout(() => resolve(getStoredStations()), 100));
 }
 
@@ -59,7 +60,7 @@ async function saveStationApi(stationData: Omit<Station, 'id'> | Station): Promi
   if ('id' in stationData && stationData.id) { // Update
     const index = currentStations.findIndex(s => s.id === stationData.id);
     if (index !== -1) {
-      currentStations[index] = { ...currentStations[index], ...stationData, id: stationId }; // Ensure ID is correct
+      currentStations[index] = { ...currentStations[index], ...stationData, id: stationId };
       savedStation = currentStations[index];
     } else { // ID provided but not found, treat as new
       savedStation = { ...stationData, id: stationId } as Station;
@@ -70,7 +71,6 @@ async function saveStationApi(stationData: Omit<Station, 'id'> | Station): Promi
     currentStations.push(savedStation);
   }
   storeStations(currentStations);
-  // Simulate API delay
   return new Promise(resolve => setTimeout(() => resolve(savedStation), 100));
 }
 
@@ -79,7 +79,6 @@ async function deleteStationApi(stationId: string): Promise<void> {
   let currentStations = getStoredStations();
   currentStations = currentStations.filter(s => s.id !== stationId);
   storeStations(currentStations);
-  // Simulate API delay
   return new Promise(resolve => setTimeout(() => resolve(), 100));
 }
 
@@ -105,7 +104,7 @@ export default function AdminStationsPage() {
     setFilteredStations(
       stations.filter(station => 
         station.name.toLowerCase().includes(lowerSearchTerm) ||
-        (station.address || "").toLowerCase().includes(lowerSearchTerm) // Safe access for optional address
+        (station.address || "").toLowerCase().includes(lowerSearchTerm)
       )
     );
   }, [searchTerm, stations]);
@@ -113,10 +112,11 @@ export default function AdminStationsPage() {
   const loadStations = async () => {
     setIsLoading(true);
     try {
-      const data = await fetchStationsApi(); // Use the new API function name
+      const data = await fetchStationsApi();
       setStations(data);
     } catch (error) {
       toast({ title: t("errorFetchingStations", "Error fetching stations"), description: String(error), variant: "destructive" });
+      setStations([...initialMockStationsFromFile]); // Fallback to initial mocks on error
     }
     setIsLoading(false);
   };
@@ -135,7 +135,7 @@ export default function AdminStationsPage() {
     try {
       await deleteStationApi(stationId);
       toast({ title: t("stationDeleted", "Station deleted successfully") });
-      loadStations(); // Refresh list
+      loadStations(); 
     } catch (error) {
       toast({ title: t("errorDeletingStation", "Error deleting station"), description: String(error), variant: "destructive" });
     }
