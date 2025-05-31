@@ -6,7 +6,7 @@ import type { Station } from "@/types";
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from "@/lib/constants";
 import { StationMarker } from "./station-marker";
 import { useEffect, useState } from "react";
-import { LocateFixed, Plus, Minus } from "lucide-react"; // Added Plus and Minus
+import { LocateFixed, Plus, Minus } from "lucide-react"; 
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/theme-context";
 
@@ -136,7 +136,7 @@ function UserLocationButton() {
       size="icon"
       onClick={handleLocateUser}
       disabled={loading}
-      className="absolute bottom-6 right-4 z-10 bg-background shadow-md" // Adjusted bottom from 24 to 6
+      className="absolute bottom-6 right-4 z-10 bg-background shadow-md" 
       aria-label="Locate me"
     >
       <LocateFixed className="h-5 w-5" />
@@ -168,8 +168,6 @@ function ZoomControls() {
 
   return (
     <div className="absolute bottom-[4.5rem] right-4 z-10 flex flex-col space-y-2"> 
-      {/* Positioned 0.5rem above the UserLocationButton which is h-10 (2.5rem) and at bottom-6 (1.5rem)
-          1.5rem (UserLocationButton bottom) + 2.5rem (UserLocationButton height) + 0.5rem (space) = 4.5rem */}
       <Button
         variant="outline"
         size="icon"
@@ -200,6 +198,7 @@ export function MapView({ stations, onStationSelect }: MapViewProps) {
     <div className="relative h-full w-full">
       <Map
         key={theme} // Force re-render on theme change
+        mapId="DEMO_MAP_ID" // Added for AdvancedMarker compatibility
         defaultCenter={DEFAULT_MAP_CENTER}
         defaultZoom={DEFAULT_MAP_ZOOM}
         gestureHandling={"greedy"}
