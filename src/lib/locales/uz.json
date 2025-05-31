@@ -1,3 +1,4 @@
+
 {
   "appName": "ElectroCar Zaryadlash",
   "adminLogin": "Administrator kirishi",
@@ -41,5 +42,6 @@
   "login": "Kirish",
   "username": "Foydalanuvchi nomi",
   "password": "Parol",
-  "searchStations": "Stansiyalarni qidirish..."
+  "searchStations": "Stansiyalarni qidirish...",
+  "home": "Bosh sahifa"
 }

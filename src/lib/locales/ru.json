@@ -1,3 +1,4 @@
+
 {
   "appName": "ElectroCar Зарядка",
   "adminLogin": "Вход для администратора",
@@ -41,5 +42,6 @@
   "login": "Войти",
   "username": "Имя пользователя",
   "password": "Пароль",
-  "searchStations": "Поиск станций..."
+  "searchStations": "Поиск станций...",
+  "home": "Главная"
 }

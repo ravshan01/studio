@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -5,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSelector } from "@/components/language-selector";
 import { useLanguage } from "@/contexts/language-context";
-import { Waypoints } from "lucide-react";
+import { Waypoints, Home } from "lucide-react"; // Added Home icon
 
 export function Header() {
   const { t } = useLanguage();
@@ -20,6 +21,12 @@ export function Header() {
         <div className="flex items-center gap-4">
           <LanguageSelector />
           <ThemeToggle />
+          <Button asChild variant="outline">
+            <Link href="/">
+              <Home />
+              {t("home", "Home")}
+            </Link>
+          </Button>
           <Button asChild variant="outline">
             <Link href="/admin/login">{t("adminLogin", "Admin Login")}</Link>
           </Button>
