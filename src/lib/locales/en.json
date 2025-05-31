@@ -54,7 +54,7 @@
   "openMap": "Open Map",
   "adminWelcome": "Welcome back, please login to your account.",
   "backToMap": "← Back to Map View",
-  "stationAddressPlaceholder": "Enter full address",
+  "stationAddressPlaceholder": "Enter full address or pick from map",
   "optional": "Optional",
   "removePort": "Remove port",
   "addPort": "Add Port",
@@ -73,6 +73,11 @@
   "searchByNameOrAddress": "Search by name or address...",
   "loadingStations": "Loading stations...",
   "locationOnMap": "Location on Map",
-  "mapFormHelpText": "Click on the map or drag the marker to set coordinates.",
-  "searchPlaceholderMap": "Search stations by name or address..."
+  "mapFormHelpText": "Click on the map or drag the marker to set coordinates. Address will be auto-filled.",
+  "searchPlaceholderMap": "Search stations by name or address...",
+  "geocodingFailed": "Address lookup failed",
+  "noAddressFound": "No address found for this location",
+  "fetchingAddress": "Fetching address...",
+  "zoomIn": "Zoom in",
+  "zoomOut": "Zoom out"
 }

@@ -54,7 +54,7 @@
   "openMap": "Xaritani ochish",
   "adminWelcome": "Xush kelibsiz, iltimos, hisobingizga kiring.",
   "backToMap": "← Xaritaga qaytish",
-  "stationAddressPlaceholder": "To'liq manzilni kiriting",
+  "stationAddressPlaceholder": "To'liq manzilni kiriting yoki xaritadan tanlang",
   "optional": "Ixtiyoriy",
   "removePort": "Portni o'chirish",
   "addPort": "Port qo'shish",
@@ -73,6 +73,11 @@
   "searchByNameOrAddress": "Nomi yoki manzili bo'yicha qidirish...",
   "loadingStations": "Stansiyalar yuklanmoqda...",
   "locationOnMap": "Xaritadagi joylashuv",
-  "mapFormHelpText": "Koordinatalarni o'rnatish uchun xaritaga bosing yoki belgini torting.",
-  "searchPlaceholderMap": "Stansiyalarni nomi yoki manzili bo'yicha qidirish..."
+  "mapFormHelpText": "Koordinatalarni o'rnatish uchun xaritaga bosing yoki belgini torting. Manzil avtomatik ravishda to'ldiriladi.",
+  "searchPlaceholderMap": "Stansiyalarni nomi yoki manzili bo'yicha qidirish...",
+  "geocodingFailed": "Manzilni aniqlashda xatolik",
+  "noAddressFound": "Ushbu joylashuv uchun manzil topilmadi",
+  "fetchingAddress": "Manzil olinmoqda...",
+  "zoomIn": "Yaqinlashtirish",
+  "zoomOut": "Uzoqlashtirish"
 }

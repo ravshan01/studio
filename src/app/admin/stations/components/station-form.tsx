@@ -24,16 +24,17 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Station } from "@/types";
 import { useLanguage } from "@/contexts/language-context";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { PlusCircle, Trash2, Plus, Minus } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { Map, AdvancedMarker } from "@vis.gl/react-google-maps";
+import { Map, AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from "@/lib/constants";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const generatePortId = () => `port_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 
 const portSchema = z.object({
-  id: z.string(), // Ensure ID is part of the schema
+  id: z.string(),
   type: z.enum(["Type 1", "Type 2", "CCS", "CHAdeMO"]),
   powerKW: z.coerce.number().min(1, "Power must be positive"),
   status: z.enum(["available", "occupied", "out_of_order"]),
@@ -42,7 +43,7 @@ const portSchema = z.object({
 
 const stationFormSchema = z.object({
   name: z.string().min(3, "Station name must be at least 3 characters"),
-  address: z.string().optional(), // Made address optional
+  address: z.string().optional(),
   latitude: z.coerce.number().min(-90).max(90),
   longitude: z.coerce.number().min(-180).max(180),
   type: z.enum(["AC", "DC", "Hybrid"]),
@@ -60,14 +61,66 @@ interface StationFormProps {
   isSubmitting?: boolean;
 }
 
+function FormMapZoomControls() {
+  const map = useMap("station_form_map_id");
+  const { t } = useLanguage();
+
+  const handleZoomIn = () => {
+    if (map) {
+      const currentZoom = map.getZoom();
+      if (currentZoom !== undefined) {
+        map.setZoom(currentZoom + 1);
+      }
+    }
+  };
+
+  const handleZoomOut = () => {
+    if (map) {
+      const currentZoom = map.getZoom();
+      if (currentZoom !== undefined && currentZoom > 0) {
+        map.setZoom(currentZoom - 1);
+      }
+    }
+  };
+
+  return (
+    <div className="absolute bottom-4 right-4 z-10 flex flex-col space-y-2">
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        onClick={handleZoomIn}
+        className="bg-background shadow-md"
+        aria-label={t("zoomIn", "Zoom in")}
+      >
+        <Plus className="h-5 w-5" />
+      </Button>
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        onClick={handleZoomOut}
+        className="bg-background shadow-md"
+        aria-label={t("zoomOut", "Zoom out")}
+      >
+        <Minus className="h-5 w-5" />
+      </Button>
+    </div>
+  );
+}
+
+
 export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: StationFormProps) {
   const { t } = useLanguage();
+  const { toast } = useToast();
+  const [isGeocoding, setIsGeocoding] = useState(false);
+
   const form = useForm<StationFormData>({
     resolver: zodResolver(stationFormSchema),
     defaultValues: initialData
       ? {
           ...initialData,
-          ports: initialData.ports.map(p => ({...p})) // ensure ports are new objects, IDs preserved
+          ports: initialData.ports.map(p => ({...p})) 
         }
       : {
           name: "",
@@ -95,14 +148,41 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
     ? { lat: initialData.latitude, lng: initialData.longitude }
     : DEFAULT_MAP_CENTER;
 
+  const geocodeLocation = useCallback((lat: number, lng: number) => {
+    if (!window.google || !window.google.maps || !window.google.maps.Geocoder) {
+      console.error("Google Maps Geocoder not available.");
+      toast({ title: t("geocodingFailed", "Address lookup failed."), description: "Google Maps Geocoder not available.", variant: "destructive" });
+      return;
+    }
+    setIsGeocoding(true);
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+      setIsGeocoding(false);
+      if (status === "OK") {
+        if (results && results[0]) {
+          form.setValue("address", results[0].formatted_address, { shouldValidate: true, shouldDirty: true });
+        } else {
+          form.setValue("address", "", { shouldValidate: true, shouldDirty: true }); // Clear address if not found
+          toast({ title: t("noAddressFound", "No address found for this location."), variant: "default" });
+        }
+      } else {
+        form.setValue("address", "", { shouldValidate: true, shouldDirty: true }); // Clear address on error
+        toast({ title: t("geocodingFailed", "Address lookup failed."), description: `Geocoder failed due to: ${status}`, variant: "destructive" });
+        console.error(`Geocoder failed due to: ${status}`);
+      }
+    });
+  }, [form, t, toast]);
+
+
   const handleMapClick = useCallback((event: google.maps.MapMouseEvent) => {
     if (event.detail.latLng) {
         const lat = event.detail.latLng.lat;
         const lng = event.detail.latLng.lng;
         form.setValue("latitude", parseFloat(lat.toFixed(6)), { shouldValidate: true, shouldDirty: true });
         form.setValue("longitude", parseFloat(lng.toFixed(6)), { shouldValidate: true, shouldDirty: true });
+        geocodeLocation(lat, lng);
     }
-  }, [form]);
+  }, [form, geocodeLocation]);
 
   const handleMarkerDragEnd = useCallback((event: google.maps.MapMouseEvent) => {
       if (event.latLng) {
@@ -110,8 +190,9 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
           const lng = event.latLng.lng();
           form.setValue("latitude", parseFloat(lat.toFixed(6)), { shouldValidate: true, shouldDirty: true });
           form.setValue("longitude", parseFloat(lng.toFixed(6)), { shouldValidate: true, shouldDirty: true });
+          geocodeLocation(lat,lng);
       }
-  }, [form]);
+  }, [form, geocodeLocation]);
 
 
   return (
@@ -156,8 +237,8 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("address", "Address")} ({t("optional", "Optional")})</FormLabel>
-                  <FormControl><Textarea {...field} placeholder={t("stationAddressPlaceholder", "Enter full address")} /></FormControl>
+                  <FormLabel>{t("address", "Address")} ({t("optional", "Optional")}) {isGeocoding ? `(${t("fetchingAddress", "Fetching address...")})`: ''}</FormLabel>
+                  <FormControl><Textarea {...field} placeholder={t("stationAddressPlaceholder", "Enter full address or pick from map")} disabled={isGeocoding} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -189,7 +270,7 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
 
             <div className="space-y-2">
                 <FormLabel>{t("locationOnMap", "Location on Map")}</FormLabel>
-                <div style={{ height: "400px", width: "100%", borderRadius: "var(--radius)" }} className="overflow-hidden border bg-muted">
+                <div style={{ height: "400px", width: "100%", borderRadius: "var(--radius)" }} className="overflow-hidden border bg-muted relative">
                     <Map
                         center={currentPosition.lat && currentPosition.lng ? currentPosition : initialMapCenter }
                         zoom={initialData ? DEFAULT_MAP_ZOOM + 4 : DEFAULT_MAP_ZOOM +1}
@@ -207,9 +288,10 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
                             />
                         )}
                     </Map>
+                    <FormMapZoomControls />
                 </div>
                 <p className="text-sm text-muted-foreground">
-                    {t("mapFormHelpText", "Click on the map or drag the marker to set coordinates.")}
+                    {t("mapFormHelpText", "Click on the map or drag the marker to set coordinates. Address will be auto-filled.")}
                 </p>
             </div>
 
@@ -335,10 +417,10 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
         </Card>
 
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting || isGeocoding}>
             {t("cancel", "Cancel")}
           </Button>
-          <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
+          <Button type="submit" disabled={isSubmitting || isGeocoding} className="bg-primary hover:bg-primary/90">
             {isSubmitting ? t("saving", "Saving...") : t("save", "Save Station")}
           </Button>
         </div>
@@ -346,4 +428,3 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
     </Form>
   );
 }
-
