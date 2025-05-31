@@ -6,43 +6,81 @@ import { Button } from "@/components/ui/button";
 import { StationForm } from "./components/station-form";
 import { StationsTable } from "./components/stations-table";
 import type { Station } from "@/types";
-import { mockStations } from "@/lib/station-data"; // Using mock data
+import { mockStations as initialMockStationsFromFile } from "@/lib/station-data"; // Renamed import
 import { useLanguage } from "@/contexts/language-context";
 import { PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+const STATIONS_STORAGE_KEY = "electroCarStationsData";
 
-// In a real app, this would involve API calls. We'll simulate it.
-async function fetchStations(): Promise<Station[]> {
-  return new Promise(resolve => setTimeout(() => resolve(JSON.parse(JSON.stringify(mockStations))), 500));
+// Helper to get stations from localStorage
+function getStoredStations(): Station[] {
+  if (typeof window === 'undefined') return [...initialMockStationsFromFile]; // SSR fallback, return a copy
+
+  try {
+    const stored = localStorage.getItem(STATIONS_STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error("Error parsing stations from localStorage:", error);
+  }
+  // If nothing in storage or error, initialize with mock data (from file) and save it
+  const initialData = [...initialMockStationsFromFile]; // Use a copy
+  localStorage.setItem(STATIONS_STORAGE_KEY, JSON.stringify(initialData));
+  return initialData;
+}
+
+// Helper to save stations to localStorage
+function storeStations(stationsToStore: Station[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(STATIONS_STORAGE_KEY, JSON.stringify(stationsToStore));
+  } catch (error) {
+    console.error("Error saving stations to localStorage:", error);
+  }
+}
+
+// API simulation functions updated to use localStorage
+async function fetchStationsApi(): Promise<Station[]> {
+  // Simulate API delay
+  return new Promise(resolve => setTimeout(() => resolve(getStoredStations()), 100));
 }
 
 async function saveStationApi(stationData: Omit<Station, 'id'> | Station): Promise<Station> {
-  console.log("Saving station:", stationData);
-  // Simulate API call
-  return new Promise(resolve => setTimeout(() => {
-    if ('id' in stationData) { // Update
-      const index = mockStations.findIndex(s => s.id === stationData.id);
-      if (index !== -1) mockStations[index] = { ...mockStations[index], ...stationData };
-      resolve(stationData as Station);
-    } else { // Create
-      const newStation = { ...stationData, id: `station-${Date.now()}` };
-      mockStations.push(newStation);
-      resolve(newStation);
+  console.log("Saving station via localStorage:", stationData);
+  let currentStations = getStoredStations();
+  let savedStation: Station;
+
+  const stationId = ('id' in stationData && stationData.id) ? stationData.id : `station-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+  if ('id' in stationData && stationData.id) { // Update
+    const index = currentStations.findIndex(s => s.id === stationData.id);
+    if (index !== -1) {
+      currentStations[index] = { ...currentStations[index], ...stationData, id: stationId }; // Ensure ID is correct
+      savedStation = currentStations[index];
+    } else { // ID provided but not found, treat as new
+      savedStation = { ...stationData, id: stationId } as Station;
+      currentStations.push(savedStation);
     }
-  }, 500));
+  } else { // Create new
+    savedStation = { ...stationData, id: stationId } as Station;
+    currentStations.push(savedStation);
+  }
+  storeStations(currentStations);
+  // Simulate API delay
+  return new Promise(resolve => setTimeout(() => resolve(savedStation), 100));
 }
 
 async function deleteStationApi(stationId: string): Promise<void> {
-  console.log("Deleting station:", stationId);
-   // Simulate API call
-  return new Promise(resolve => setTimeout(() => {
-    const index = mockStations.findIndex(s => s.id === stationId);
-    if (index !== -1) mockStations.splice(index, 1);
-    resolve();
-  }, 500));
+  console.log("Deleting station via localStorage:", stationId);
+  let currentStations = getStoredStations();
+  currentStations = currentStations.filter(s => s.id !== stationId);
+  storeStations(currentStations);
+  // Simulate API delay
+  return new Promise(resolve => setTimeout(() => resolve(), 100));
 }
 
 
@@ -67,7 +105,7 @@ export default function AdminStationsPage() {
     setFilteredStations(
       stations.filter(station => 
         station.name.toLowerCase().includes(lowerSearchTerm) ||
-        (station.address || "").toLowerCase().includes(lowerSearchTerm)
+        (station.address || "").toLowerCase().includes(lowerSearchTerm) // Safe access for optional address
       )
     );
   }, [searchTerm, stations]);
@@ -75,7 +113,7 @@ export default function AdminStationsPage() {
   const loadStations = async () => {
     setIsLoading(true);
     try {
-      const data = await fetchStations();
+      const data = await fetchStationsApi(); // Use the new API function name
       setStations(data);
     } catch (error) {
       toast({ title: t("errorFetchingStations", "Error fetching stations"), description: String(error), variant: "destructive" });
