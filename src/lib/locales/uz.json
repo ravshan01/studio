@@ -73,7 +73,6 @@
   "searchByNameOrAddress": "Nomi yoki manzili bo'yicha qidirish...",
   "loadingStations": "Stansiyalar yuklanmoqda...",
   "locationOnMap": "Xaritadagi joylashuv",
-  "mapFormHelpText": "Koordinatalarni o'rnatish uchun xaritaga bosing yoki belgini torting."
+  "mapFormHelpText": "Koordinatalarni o'rnatish uchun xaritaga bosing yoki belgini torting.",
+  "searchPlaceholderMap": "Stansiyalarni nomi yoki manzili bo'yicha qidirish..."
 }
-
-    

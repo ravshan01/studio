@@ -1,5 +1,7 @@
+
 "use client";
 
+import { useState, useEffect } from "react";
 import { Header } from "@/components/layout/header";
 import { MapView } from "@/components/map/map-view";
 import { StationDetailsPanel } from "@/components/station-details-panel";
@@ -9,6 +11,21 @@ import { useSelectedStation } from "@/contexts/selected-station-context";
 
 export default function HomePage() {
   const { selectedStation, setSelectedStation, isPanelOpen, setIsPanelOpen } = useSelectedStation();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [displayedStations, setDisplayedStations] = useState<Station[]>(mockStations);
+
+  useEffect(() => {
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    if (!lowerSearchTerm) {
+      setDisplayedStations(mockStations);
+      return;
+    }
+    const filtered = mockStations.filter(station =>
+      station.name.toLowerCase().includes(lowerSearchTerm) ||
+      (station.address || "").toLowerCase().includes(lowerSearchTerm)
+    );
+    setDisplayedStations(filtered);
+  }, [searchTerm]);
 
   const handleStationSelect = (station: Station) => {
     setSelectedStation(station);
@@ -23,9 +40,13 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col h-screen">
-      <Header />
+      <Header 
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        showSearch={true}
+      />
       <main className="flex-grow relative">
-        <MapView stations={mockStations} onStationSelect={handleStationSelect} />
+        <MapView stations={displayedStations} onStationSelect={handleStationSelect} />
       </main>
       <StationDetailsPanel
         station={selectedStation}

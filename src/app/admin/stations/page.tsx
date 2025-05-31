@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -66,7 +67,7 @@ export default function AdminStationsPage() {
     setFilteredStations(
       stations.filter(station => 
         station.name.toLowerCase().includes(lowerSearchTerm) ||
-        station.address.toLowerCase().includes(lowerSearchTerm)
+        (station.address || "").toLowerCase().includes(lowerSearchTerm)
       )
     );
   }, [searchTerm, stations]);

@@ -73,7 +73,6 @@
   "searchByNameOrAddress": "Search by name or address...",
   "loadingStations": "Loading stations...",
   "locationOnMap": "Location on Map",
-  "mapFormHelpText": "Click on the map or drag the marker to set coordinates."
+  "mapFormHelpText": "Click on the map or drag the marker to set coordinates.",
+  "searchPlaceholderMap": "Search stations by name or address..."
 }
-
-    
