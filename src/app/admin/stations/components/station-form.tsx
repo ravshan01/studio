@@ -62,7 +62,7 @@ interface StationFormProps {
 }
 
 function FormMapZoomControls() {
-  const map = useMap("station_form_map_id");
+  const map = useMap(); // Changed from useMap("station_form_map_id")
   const { t } = useLanguage();
 
   const handleZoomIn = () => {
@@ -120,7 +120,7 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
     defaultValues: initialData
       ? {
           ...initialData,
-          ports: initialData.ports.map(p => ({...p})) 
+          ports: initialData.ports.map(p => ({...p, id: p.id || generatePortId() })) 
         }
       : {
           name: "",
@@ -162,11 +162,11 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
         if (results && results[0]) {
           form.setValue("address", results[0].formatted_address, { shouldValidate: true, shouldDirty: true });
         } else {
-          form.setValue("address", "", { shouldValidate: true, shouldDirty: true }); // Clear address if not found
+          form.setValue("address", "", { shouldValidate: true, shouldDirty: true }); 
           toast({ title: t("noAddressFound", "No address found for this location."), variant: "default" });
         }
       } else {
-        form.setValue("address", "", { shouldValidate: true, shouldDirty: true }); // Clear address on error
+        form.setValue("address", "", { shouldValidate: true, shouldDirty: true }); 
         toast({ title: t("geocodingFailed", "Address lookup failed."), description: `Geocoder failed due to: ${status}`, variant: "destructive" });
         console.error(`Geocoder failed due to: ${status}`);
       }
@@ -277,7 +277,7 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
                         gestureHandling={"greedy"}
                         disableDefaultUI={true}
                         onClick={handleMapClick}
-                        mapId="station_form_map_id"
+                        mapId="station_form_map_id" 
                         className="h-full w-full"
                     >
                         { (watchedLatitude && watchedLongitude) && (
@@ -428,3 +428,4 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
     </Form>
   );
 }
+
