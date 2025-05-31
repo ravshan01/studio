@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -5,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ListChecks, LogOut, Menu, Settings, Users } from "lucide-react";
+import { LayoutDashboard, ListChecks, LogOut, Menu, Users, Map } from "lucide-react"; // Added Map icon
 import { useLanguage } from "@/contexts/language-context";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSelector } from "@/components/language-selector";
@@ -88,6 +89,12 @@ export default function AdminLayout({
             </SheetContent>
           </Sheet>
           <div className="ml-auto flex items-center gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/">
+                <Map className="h-4 w-4" />
+                {t("viewMap", "View Map")}
+              </Link>
+            </Button>
             <LanguageSelector />
             <ThemeToggle />
           </div>
