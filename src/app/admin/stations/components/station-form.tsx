@@ -62,7 +62,7 @@ interface StationFormProps {
 }
 
 function FormMapZoomControls() {
-  const map = useMap(); // Should get context from parent <Map>
+  const map = useMap(); 
   const { t } = useLanguage();
 
   const handleZoomIn = () => {
@@ -273,7 +273,7 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
                 <div style={{ height: "400px", width: "100%", borderRadius: "var(--radius)" }} className="overflow-hidden border bg-muted relative">
                     <Map
                         center={currentPosition.lat && currentPosition.lng ? currentPosition : initialMapCenter }
-                        zoom={initialData ? DEFAULT_MAP_ZOOM + 4 : DEFAULT_MAP_ZOOM +1}
+                        defaultZoom={initialData ? DEFAULT_MAP_ZOOM + 4 : DEFAULT_MAP_ZOOM +1}
                         gestureHandling={"greedy"}
                         disableDefaultUI={true}
                         onClick={handleMapClick}
@@ -428,4 +428,3 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
     </Form>
   );
 }
-
