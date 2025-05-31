@@ -39,7 +39,7 @@ const portSchema = z.object({
 
 const stationFormSchema = z.object({
   name: z.string().min(3, "Station name must be at least 3 characters"),
-  address: z.string().min(5, "Address must be at least 5 characters"),
+  address: z.string().optional(), // Made address optional
   latitude: z.coerce.number().min(-90).max(90),
   longitude: z.coerce.number().min(-180).max(180),
   type: z.enum(["AC", "DC", "Hybrid"]),
@@ -153,7 +153,7 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("address", "Address")}</FormLabel>
+                  <FormLabel>{t("address", "Address")} ({t("optional", "Optional")})</FormLabel>
                   <FormControl><Textarea {...field} placeholder={t("stationAddressPlaceholder", "Enter full address")} /></FormControl>
                   <FormMessage />
                 </FormItem>
@@ -343,5 +343,3 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
     </Form>
   );
 }
-
-    

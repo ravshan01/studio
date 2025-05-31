@@ -11,7 +11,7 @@ export interface Port {
 export interface Station {
   id: string;
   name: string;
-  address: string;
+  address?: string; // Made address optional
   latitude: number;
   longitude: number;
   type: StationType;
