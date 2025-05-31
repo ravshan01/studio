@@ -195,25 +195,15 @@ function ZoomControls() {
 
 export function MapView({ stations, onStationSelect }: MapViewProps) {
   const { theme } = useTheme();
-  const [mapId, setMapId] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    // This is a trick to force re-render map with new style ID if needed
-    // For some map libraries, directly setting style array is enough
-    // For @vis.gl/react-google-maps, mapId is preferred for predefined styles
-    // Here we use it more as a key to force re-render if theme changes for custom styles.
-    setMapId(theme === "dark" ? "dark_map_style" : "light_map_style");
-  }, [theme]);
   
   return (
     <div className="relative h-full w-full">
       <Map
-        key={mapId} // Force re-render on theme change if styles are complex
+        key={theme} // Force re-render on theme change
         defaultCenter={DEFAULT_MAP_CENTER}
         defaultZoom={DEFAULT_MAP_ZOOM}
         gestureHandling={"greedy"}
         disableDefaultUI={true}
-        mapId={mapId} // Can be used for cloud-based map styling
         styles={theme === 'dark' ? mapStyleDark : mapStyleLight}
         className="h-full w-full"
       >
