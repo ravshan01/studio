@@ -22,15 +22,13 @@ function getStoredStations(): Station[] {
   const stored = localStorage.getItem(STATIONS_STORAGE_KEY);
   if (stored) {
     try {
-      return JSON.parse(stored); // Try to parse existing data
+      return JSON.parse(stored);
     } catch (error) {
       console.error("Error parsing stations from localStorage in getStoredStations. Resetting.", error);
-      localStorage.removeItem(STATIONS_STORAGE_KEY); // Clear potentially corrupted data
-      // Fall through to re-initialize
+      localStorage.removeItem(STATIONS_STORAGE_KEY);
     }
   }
-  // Initialize if 'stored' was null, or if parsing failed and it was cleared.
-  const initialData = [...initialMockStationsFromFile]; // Use a fresh copy
+  const initialData = [...initialMockStationsFromFile];
   localStorage.setItem(STATIONS_STORAGE_KEY, JSON.stringify(initialData));
   return initialData;
 }
@@ -50,28 +48,28 @@ async function fetchStationsApi(): Promise<Station[]> {
   return new Promise(resolve => setTimeout(() => resolve(getStoredStations()), 100));
 }
 
-async function saveStationApi(stationData: Omit<Station, 'id'> | Station): Promise<Station> {
+async function saveStationApi(stationData: Omit<Station, 'id'> | Station): Promise<Station[]> { // Return full list
   console.log("Saving station via localStorage:", stationData);
   let currentStations = getStoredStations();
-  let savedStation: Station;
-
+  
   const stationId = ('id' in stationData && stationData.id) ? stationData.id : `station-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
   if ('id' in stationData && stationData.id) { // Update
     const index = currentStations.findIndex(s => s.id === stationData.id);
     if (index !== -1) {
       currentStations[index] = { ...currentStations[index], ...stationData, id: stationId };
-      savedStation = currentStations[index];
-    } else { // ID provided but not found, treat as new
-      savedStation = { ...stationData, id: stationId } as Station;
-      currentStations.push(savedStation);
+    } else { 
+      const newStation = { ...stationData, id: stationId } as Station;
+      currentStations.push(newStation);
     }
   } else { // Create new
-    savedStation = { ...stationData, id: stationId } as Station;
-    currentStations.push(savedStation);
+    const newStation = { ...stationData, id: stationId } as Station;
+    currentStations.push(newStation);
   }
-  storeStations(currentStations);
-  return new Promise(resolve => setTimeout(() => resolve(savedStation), 100));
+  storeStations(currentStations); // Save the modified list
+  
+  // Read back from LS to ensure we use the stored version
+  return new Promise(resolve => setTimeout(() => resolve(getStoredStations()), 50)); 
 }
 
 async function deleteStationApi(stationId: string): Promise<void> {
@@ -116,7 +114,7 @@ export default function AdminStationsPage() {
       setStations(data);
     } catch (error) {
       toast({ title: t("errorFetchingStations", "Error fetching stations"), description: String(error), variant: "destructive" });
-      setStations([...initialMockStationsFromFile]); // Fallback to initial mocks on error
+      setStations([...initialMockStationsFromFile]); 
     }
     setIsLoading(false);
   };
@@ -144,13 +142,18 @@ export default function AdminStationsPage() {
   const handleFormSubmit = async (data: Omit<Station, 'id'> | Station) => {
     setIsSubmitting(true);
     try {
-      const savedStation = await saveStationApi(data);
-      toast({ title: editingStation ? t("stationUpdated", "Station updated") : t("stationAdded", "Station added"), description: savedStation.name });
+      const updatedStationsList = await saveStationApi(data);
+      const stationNameForToast = ('name' in data && data.name) ? data.name : "Station";
+      
+      toast({ title: editingStation ? t("stationUpdated", "Station updated") : t("stationAdded", "Station added"), description: stationNameForToast });
+      setStations(updatedStationsList); // Update state with the list returned by saveStationApi
       setIsFormOpen(false);
       setEditingStation(null);
-      loadStations();
+      // No need to call loadStations() as setStations was called directly
     } catch (error) {
       toast({ title: t("errorSavingStation", "Error saving station"), description: String(error), variant: "destructive" });
+      // If saving failed, we might want to reload stations to reflect actual persisted state
+      loadStations();
     }
     setIsSubmitting(false);
   };
