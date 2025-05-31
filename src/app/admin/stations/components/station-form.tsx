@@ -62,7 +62,7 @@ interface StationFormProps {
 }
 
 function FormMapZoomControls() {
-  const map = useMap(); // Changed from useMap("station_form_map_id")
+  const map = useMap(); // Should get context from parent <Map>
   const { t } = useLanguage();
 
   const handleZoomIn = () => {
@@ -287,8 +287,8 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
                                 onDragEnd={handleMarkerDragEnd}
                             />
                         )}
+                        <FormMapZoomControls />
                     </Map>
-                    <FormMapZoomControls />
                 </div>
                 <p className="text-sm text-muted-foreground">
                     {t("mapFormHelpText", "Click on the map or drag the marker to set coordinates. Address will be auto-filled.")}
