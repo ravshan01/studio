@@ -1,4 +1,6 @@
-export const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "AIzaSyBt7_VVq_kLxenCM76WjXsElWJyDJQxgNc"; // It's better to use environment variables
+
+// Ensure you have NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your .env.local
+export const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export const DEFAULT_MAP_CENTER = {
   lat: 41.2995, // Tashkent

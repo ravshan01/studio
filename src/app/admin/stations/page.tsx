@@ -6,80 +6,12 @@ import { Button } from "@/components/ui/button";
 import { StationForm } from "./components/station-form";
 import { StationsTable } from "./components/stations-table";
 import type { Station } from "@/types";
-import { mockStations as initialMockStationsFromFile } from "@/lib/station-data";
 import { useLanguage } from "@/contexts/language-context";
 import { PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-const STATIONS_STORAGE_KEY = "electroCarStationsData";
-
-// Helper to get stations from localStorage
-function getStoredStations(): Station[] {
-  if (typeof window === 'undefined') return [...initialMockStationsFromFile]; // SSR fallback
-
-  const stored = localStorage.getItem(STATIONS_STORAGE_KEY);
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch (error) {
-      console.error("Error parsing stations from localStorage in getStoredStations. Resetting.", error);
-      localStorage.removeItem(STATIONS_STORAGE_KEY);
-    }
-  }
-  const initialData = [...initialMockStationsFromFile];
-  localStorage.setItem(STATIONS_STORAGE_KEY, JSON.stringify(initialData));
-  return initialData;
-}
-
-// Helper to save stations to localStorage
-function storeStations(stationsToStore: Station[]): void {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.setItem(STATIONS_STORAGE_KEY, JSON.stringify(stationsToStore));
-  } catch (error) {
-    console.error("Error saving stations to localStorage:", error);
-  }
-}
-
-// API simulation functions updated to use localStorage
-async function fetchStationsApi(): Promise<Station[]> {
-  return new Promise(resolve => setTimeout(() => resolve(getStoredStations()), 100));
-}
-
-async function saveStationApi(stationData: Omit<Station, 'id'> | Station): Promise<Station[]> { // Return full list
-  console.log("Saving station via localStorage:", stationData);
-  let currentStations = getStoredStations();
-  
-  const stationId = ('id' in stationData && stationData.id) ? stationData.id : `station-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-  if ('id' in stationData && stationData.id) { // Update
-    const index = currentStations.findIndex(s => s.id === stationData.id);
-    if (index !== -1) {
-      currentStations[index] = { ...currentStations[index], ...stationData, id: stationId };
-    } else { 
-      const newStation = { ...stationData, id: stationId } as Station;
-      currentStations.push(newStation);
-    }
-  } else { // Create new
-    const newStation = { ...stationData, id: stationId } as Station;
-    currentStations.push(newStation);
-  }
-  storeStations(currentStations); // Save the modified list
-  
-  // Read back from LS to ensure we use the stored version
-  return new Promise(resolve => setTimeout(() => resolve(getStoredStations()), 50)); 
-}
-
-async function deleteStationApi(stationId: string): Promise<void> {
-  console.log("Deleting station via localStorage:", stationId);
-  let currentStations = getStoredStations();
-  currentStations = currentStations.filter(s => s.id !== stationId);
-  storeStations(currentStations);
-  return new Promise(resolve => setTimeout(() => resolve(), 100));
-}
-
+import { getStations, addStation, updateStation, deleteStation } from "@/app/actions/stationActions";
 
 export default function AdminStationsPage() {
   const { t } = useLanguage();
@@ -92,6 +24,17 @@ export default function AdminStationsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const loadStations = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getStations();
+      setStations(data);
+    } catch (error) {
+      toast({ title: t("errorFetchingStations", "Error fetching stations"), description: String(error), variant: "destructive" });
+      setStations([]); 
+    }
+    setIsLoading(false);
+  };
 
   useEffect(() => {
     loadStations();
@@ -107,18 +50,6 @@ export default function AdminStationsPage() {
     );
   }, [searchTerm, stations]);
 
-  const loadStations = async () => {
-    setIsLoading(true);
-    try {
-      const data = await fetchStationsApi();
-      setStations(data);
-    } catch (error) {
-      toast({ title: t("errorFetchingStations", "Error fetching stations"), description: String(error), variant: "destructive" });
-      setStations([...initialMockStationsFromFile]); 
-    }
-    setIsLoading(false);
-  };
-
   const handleAddStation = () => {
     setEditingStation(null);
     setIsFormOpen(true);
@@ -131,29 +62,31 @@ export default function AdminStationsPage() {
 
   const handleDeleteStation = async (stationId: string) => {
     try {
-      await deleteStationApi(stationId);
+      await deleteStation(stationId);
       toast({ title: t("stationDeleted", "Station deleted successfully") });
-      loadStations(); 
+      await loadStations(); 
     } catch (error) {
       toast({ title: t("errorDeletingStation", "Error deleting station"), description: String(error), variant: "destructive" });
     }
   };
 
-  const handleFormSubmit = async (data: Omit<Station, 'id'> | Station) => {
+  const handleFormSubmit = async (data: Omit<Station, 'id'> & { id?: string }) => {
     setIsSubmitting(true);
     try {
-      const updatedStationsList = await saveStationApi(data);
-      const stationNameForToast = ('name' in data && data.name) ? data.name : "Station";
-      
-      toast({ title: editingStation ? t("stationUpdated", "Station updated") : t("stationAdded", "Station added"), description: stationNameForToast });
-      setStations(updatedStationsList); // Update state with the list returned by saveStationApi
+      if (editingStation && editingStation.id) {
+        const { id, ...updateData } = data; // id is not part of updateData
+        await updateStation(editingStation.id, updateData);
+        toast({ title: t("stationUpdated", "Station updated") });
+      } else {
+        const { id, ...addData } = data; // id might be undefined or an old client-side one
+        await addStation(addData);
+        toast({ title: t("stationAdded", "Station added") });
+      }
+      await loadStations();
       setIsFormOpen(false);
       setEditingStation(null);
-      // No need to call loadStations() as setStations was called directly
     } catch (error) {
       toast({ title: t("errorSavingStation", "Error saving station"), description: String(error), variant: "destructive" });
-      // If saving failed, we might want to reload stations to reflect actual persisted state
-      loadStations();
     }
     setIsSubmitting(false);
   };
@@ -162,7 +95,6 @@ export default function AdminStationsPage() {
     setIsFormOpen(false);
     setEditingStation(null);
   };
-
 
   if (isFormOpen) {
     return (

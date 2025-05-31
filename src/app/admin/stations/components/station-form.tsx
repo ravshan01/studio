@@ -34,7 +34,7 @@ import { useToast } from "@/hooks/use-toast";
 const generatePortId = () => `port_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 
 const portSchema = z.object({
-  id: z.string(),
+  id: z.string(), // Ensure ID is part of the schema
   type: z.enum(["Type 1", "Type 2", "CCS", "CHAdeMO"]),
   powerKW: z.coerce.number().min(1, "Power must be positive"),
   status: z.enum(["available", "occupied", "out_of_order"]),
@@ -52,11 +52,15 @@ const stationFormSchema = z.object({
   ports: z.array(portSchema).min(1, "At least one port is required"),
 });
 
-type StationFormData = z.infer<typeof stationFormSchema>;
+// This type is what the form will handle.
+// It can include an 'id' if we are editing, or not if creating.
+export type StationFormData = z.infer<typeof stationFormSchema> & { id?: string };
+
 
 interface StationFormProps {
   initialData?: Station | null;
-  onSubmit: (data: StationFormData) => Promise<void>;
+  // onSubmit now takes StationFormData which might include an ID for updates
+  onSubmit: (data: StationFormData) => Promise<void>; 
   onCancel: () => void;
   isSubmitting?: boolean;
 }
@@ -119,7 +123,7 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
     resolver: zodResolver(stationFormSchema),
     defaultValues: initialData
       ? {
-          ...initialData,
+          ...initialData, // Spread all properties of initialData, including its 'id'
           ports: initialData.ports.map(p => ({...p, id: p.id || generatePortId() })) 
         }
       : {
@@ -131,6 +135,7 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
           operator: "",
           openingHours: "24/7",
           ports: [{ id: generatePortId(), type: "Type 2", powerKW: 22, status: "available", pricePerKWh: 0 }],
+          // No 'id' for new stations; Firestore will generate it
         },
   });
 
@@ -194,10 +199,18 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
       }
   }, [form, geocodeLocation]);
 
+  const handleSubmit = (data: StationFormData) => {
+    const dataToSubmit: StationFormData = { ...data };
+    if (initialData?.id) { // If editing, include the existing ID
+        dataToSubmit.id = initialData.id;
+    }
+    onSubmit(dataToSubmit);
+  };
+
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
         <Card>
           <CardHeader><CardTitle>{t("stationDetails", "Station Details")}</CardTitle></CardHeader>
           <CardContent className="space-y-4">
@@ -428,3 +441,4 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
     </Form>
   );
 }
+

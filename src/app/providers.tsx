@@ -14,10 +14,14 @@ interface AppProvidersProps {
 }
 
 export function AppProviders({ children }: Readonly<AppProvidersProps>) {
+  if (!GOOGLE_MAPS_API_KEY) {
+    console.error("Google Maps API Key is missing. Please set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY environment variable.");
+    // Potentially render an error message or a placeholder
+  }
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
+        <APIProvider apiKey={GOOGLE_MAPS_API_KEY || "fallback-key-if-absolutely-needed-for-dev-only"}>
           <SelectedStationProvider>
             {children}
             <Toaster />
