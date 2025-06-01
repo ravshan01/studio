@@ -79,5 +79,7 @@
   "noAddressFound": "No address found for this location",
   "fetchingAddress": "Fetching address...",
   "zoomIn": "Zoom in",
-  "zoomOut": "Zoom out"
+  "zoomOut": "Zoom out",
+  "noPortsAvailable": "No port information available."
 }
+

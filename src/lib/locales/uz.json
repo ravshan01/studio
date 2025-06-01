@@ -79,5 +79,7 @@
   "noAddressFound": "Ushbu joylashuv uchun manzil topilmadi",
   "fetchingAddress": "Manzil olinmoqda...",
   "zoomIn": "Yaqinlashtirish",
-  "zoomOut": "Uzoqlashtirish"
+  "zoomOut": "Uzoqlashtirish",
+  "noPortsAvailable": "Portlar haqida ma'lumot mavjud emas."
 }
+
