@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSelector } from "@/components/language-selector";
 import { useLanguage } from "@/contexts/language-context";
-import { Waypoints, Home, Search as SearchIcon, UserCog } from "lucide-react";
+import { Waypoints, Search as SearchIcon } from "lucide-react"; // Removed Home, UserCog
 import { Input } from "@/components/ui/input";
 
 interface HeaderProps {
@@ -34,27 +34,16 @@ export function Header({ searchTerm, onSearchChange, showSearch = false }: Heade
               placeholder={t("searchPlaceholderMap", "Search stations...")}
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="h-10 w-full pl-10" // Added padding for icon
+              className="h-10 w-full pl-10"
             />
           </div>
         )}
 
-        <div className="ml-auto flex items-center gap-2 sm:gap-4">
+        <div className="ml-auto flex items-center gap-2 sm:gap-3"> {/* Adjusted gap slightly */}
           <LanguageSelector />
           <ThemeToggle />
-          <Button asChild variant="outline" size="sm">
-            <Link href="/" className="flex items-center">
-              <Home className="h-4 w-4" />
-              <span className="hidden sm:inline ml-1">{t("home", "Home")}</span>
-            </Link>
-          </Button>
-           <Button asChild variant="outline" size="sm">
-            <Link href="/admin/login" className="flex items-center">
-              <UserCog className="h-4 w-4 sm:mr-1" />
-              <span className="hidden sm:inline">{t("adminLogin", "Admin Login")}</span>
-              <span className="sm:hidden inline ml-1">{t("admin", "Admin")}</span>
-            </Link>
-          </Button>
+          {/* Admin Login button removed */}
+          {/* Home button removed */}
         </div>
       </div>
     </header>

@@ -81,6 +81,6 @@
   "fetchingAddress": "Manzil olinmoqda...",
   "zoomIn": "Yaqinlashtirish",
   "zoomOut": "Uzoqlashtirish",
-  "noPortsAvailable": "Portlar haqida ma'lumot mavjud emas."
+  "noPortsAvailable": "Portlar haqida ma'lumot mavjud emas.",
+  "toggleMenu": "Menyuni ochish/yopish"
 }
-

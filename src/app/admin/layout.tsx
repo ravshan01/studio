@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ListChecks, LogOut, Menu, Users, Map } from "lucide-react"; // Added Map icon
+import { LayoutDashboard, ListChecks, LogOut, Menu, Users, Map } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSelector } from "@/components/language-selector";
@@ -38,8 +38,10 @@ export default function AdminLayout({
               asChild
             >
               <Link href={item.href}>
-                <item.icon className="mr-2 h-4 w-4" />
-                {item.label}
+                <>
+                  <item.icon className="mr-2 h-4 w-4" />
+                  {item.label}
+                </>
               </Link>
             </Button>
           ))}
@@ -47,8 +49,10 @@ export default function AdminLayout({
         <div>
           <Button variant="ghost" className="w-full justify-start" asChild>
             <Link href="/">
-              <LogOut className="mr-2 h-4 w-4" />
-              {t("exitAdmin", "Exit Admin")}
+              <>
+                <LogOut className="mr-2 h-4 w-4" />
+                {t("exitAdmin", "Exit Admin")}
+              </>
             </Link>
           </Button>
         </div>
@@ -58,8 +62,10 @@ export default function AdminLayout({
           <Sheet>
             <SheetTrigger asChild>
               <Button size="icon" variant="outline" className="md:hidden">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
+                <>
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">{t("toggleMenu", "Toggle Menu")}</span>
+                </>
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="sm:max-w-xs">
@@ -91,8 +97,10 @@ export default function AdminLayout({
           <div className="ml-auto flex items-center gap-2">
             <Button asChild variant="outline" size="sm">
               <Link href="/" className="flex items-center">
-                <Map className="h-4 w-4" />
-                <span className="hidden sm:inline ml-1">{t("viewMap", "View Map")}</span>
+                <>
+                  <Map className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-1">{t("viewMap", "View Map")}</span>
+                </>
               </Link>
             </Button>
             <LanguageSelector />

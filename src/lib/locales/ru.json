@@ -81,6 +81,6 @@
   "fetchingAddress": "Получение адреса...",
   "zoomIn": "Приблизить",
   "zoomOut": "Отдалить",
-  "noPortsAvailable": "Информация о портах отсутствует."
+  "noPortsAvailable": "Информация о портах отсутствует.",
+  "toggleMenu": "Переключить меню"
 }
-
