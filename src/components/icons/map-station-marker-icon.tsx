@@ -2,61 +2,100 @@
 "use client";
 
 import type { StationType } from "@/types";
-// Lucide Bolt is no longer needed as we are using a custom SVG path.
 
 interface MapStationMarkerIconProps {
-  type: StationType; // This prop is received but not used to determine the icon shape for map markers.
-                     // We make all map icons use the same lightning bolt symbol for consistency, per user request.
-  size: number;           // Overall diameter of the marker
-  symbolColor: string;    // Color for the inner symbol (e.g., orange)
-  circleFillColor: string; // Fill color of the main circle (e.g., white)
-  circleStrokeColor: string; // Stroke color of the main circle (e.g., black)
+  type: StationType;
+  size: number;
+  symbolColor: string;
+  circleFillColor: string;
+  circleStrokeColor: string;
 }
 
 export function MapStationMarkerIcon({
-  // 'type' prop is passed but not used for the icon shape, ensuring all map markers are visually consistent.
+  type,
   size,
   symbolColor,
   circleFillColor,
   circleStrokeColor,
 }: MapStationMarkerIconProps) {
-  // Define thickness for the outer circle's stroke
   const circleStrokeThickness = Math.max(1.5, size / 12);
-  // Define size for the inner symbol (lightning bolt).
-  // 75% of the marker size makes the bolt prominent.
-  const innerSymbolSize = size * 0.75;
+  const innerSymbolSize = size * 0.70; // Adjusted slightly for potentially wider icons
 
-  // Calculate position to center the symbol
   const symbolX = (size - innerSymbolSize) / 2;
   const symbolY = (size - innerSymbolSize) / 2;
+
+  let symbolPath;
+  let viewBox = "0 0 24 24"; // Default viewBox
+
+  switch (type) {
+    case "AC":
+      // Simple Power Plug Icon
+      symbolPath = (
+        <path
+          d="M16 7V3h-2v4h-4V3H8v4h-.01C6.89 7 6 7.89 6 8.99v5.02C6 15.1 6.89 16 7.99 16h7.02c1.1 0 1.99-.9 1.99-2v-5.02C17.01 7.89 16.11 7 16 7z"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      );
+      break;
+    case "DC":
+      // Lightning Bolt Icon (existing)
+      symbolPath = (
+        <path
+          d="M7 21L10.2632 13H6L17 3L13.7368 11H18L7 21Z"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      );
+      break;
+    case "Hybrid":
+      // Blend Icon (from Lucide)
+      symbolPath = (
+        <>
+          <path d="M18 16H6a4 4 0 1 0 0-8h12a4 4 0 0 1 0 8Z" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M12 12v9" strokeLinecap="round" strokeLinejoin="round" />
+        </>
+      );
+      break;
+    default:
+      // Fallback to lightning bolt if type is unrecognized
+      symbolPath = (
+        <path
+          d="M7 21L10.2632 13H6L17 3L13.7368 11H18L7 21Z"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      );
+      break;
+  }
 
   return (
     <svg
       width={size}
       height={size}
-      viewBox={`0 0 ${size} ${size}`} // Outer SVG matches the marker size
+      viewBox={`0 0 ${size} ${size}`}
       xmlns="http://www.w3.org/2000/svg"
-      style={{ display: 'block' }} // Ensures proper rendering as a marker
+      style={{ display: 'block' }}
     >
       <circle
         cx={size / 2}
         cy={size / 2}
-        r={(size / 2) - (circleStrokeThickness / 2)} // Adjust radius for stroke
+        r={(size / 2) - (circleStrokeThickness / 2)}
         fill={circleFillColor}
         stroke={circleStrokeColor}
         strokeWidth={circleStrokeThickness}
       />
-      {/* Group for positioning the inner SVG symbol */}
       <g transform={`translate(${symbolX}, ${symbolY})`}>
         <svg
           width={innerSymbolSize}
           height={innerSymbolSize}
-          viewBox="0 0 24 24" // Standard viewBox for the chosen zigzag lightning bolt path
-          fill={symbolColor}   // Symbol color applied as fill
+          viewBox={viewBox}
+          fill={symbolColor}
+          stroke={type === 'Hybrid' ? symbolColor : "none"} // Hybrid icon uses stroke, others fill
+          strokeWidth={type === 'Hybrid' ? "2" : "0"} // Stroke width for Hybrid icon
           xmlns="http://www.w3.org/2000/svg"
         >
-          {/* Zigzag lightning bolt path */}
-          <path d="M7 21L10.2632 13H6L17 3L13.7368 11H18L7 21Z" />
+          {symbolPath}
         </svg>
       </g>
     </svg>
