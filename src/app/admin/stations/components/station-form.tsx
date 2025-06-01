@@ -240,7 +240,7 @@ export function StationForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t("stationName", "Station Name")}</FormLabel>
-                    <FormControl><Input {...field} /></FormControl>
+                    <FormControl><Input {...field} disabled={isGeocoding} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -251,7 +251,7 @@ export function StationForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t("type", "Type")}</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isGeocoding}>
                       <FormControl><SelectTrigger><SelectValue placeholder="Select station type" /></SelectTrigger></FormControl>
                       <SelectContent>
                         <SelectItem value="AC">{t("AC")}</SelectItem>
@@ -282,7 +282,7 @@ export function StationForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t("latitude", "Latitude")}</FormLabel>
-                    <FormControl><Input type="number" step="any" {...field} /></FormControl>
+                    <FormControl><Input type="number" step="any" {...field} disabled={isGeocoding} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -293,7 +293,7 @@ export function StationForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t("longitude", "Longitude")}</FormLabel>
-                    <FormControl><Input type="number" step="any" {...field} /></FormControl>
+                    <FormControl><Input type="number" step="any" {...field} disabled={isGeocoding} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -308,14 +308,14 @@ export function StationForm({
                         defaultZoom={initialData ? DEFAULT_MAP_ZOOM + 4 : DEFAULT_MAP_ZOOM +1}
                         gestureHandling={"greedy"}
                         disableDefaultUI={true}
-                        onClick={handleMapClick}
+                        onClick={isGeocoding ? undefined : handleMapClick}
                         mapId="station_form_map_id"
                         className="h-full w-full"
                     >
                         { (watchedLatitude && watchedLongitude) && (
                             <AdvancedMarker
                                 position={currentPosition}
-                                draggable={true}
+                                draggable={!isGeocoding}
                                 onDragEnd={handleMarkerDragEnd}
                             />
                         )}
@@ -334,7 +334,7 @@ export function StationForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t("operator", "Operator")} ({t("optional", "Optional")})</FormLabel>
-                    <FormControl><Input {...field} /></FormControl>
+                    <FormControl><Input {...field} disabled={isGeocoding} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -345,7 +345,7 @@ export function StationForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t("openingHours", "Opening Hours")} ({t("optional", "Optional")})</FormLabel>
-                    <FormControl><Input {...field} placeholder="e.g., 24/7 or 09:00 - 18:00" /></FormControl>
+                    <FormControl><Input {...field} placeholder="e.g., 24/7 or 09:00 - 18:00" disabled={isGeocoding} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -367,7 +367,7 @@ export function StationForm({
                     render={({ field: f }) => (
                       <FormItem>
                         <FormLabel>{t("portType", "Port Type")}</FormLabel>
-                        <Select onValueChange={f.onChange} defaultValue={f.value}>
+                        <Select onValueChange={f.onChange} defaultValue={f.value} disabled={isGeocoding}>
                           <FormControl><SelectTrigger><SelectValue placeholder="Select port type" /></SelectTrigger></FormControl>
                           <SelectContent>
                             <SelectItem value="Type 1">Type 1</SelectItem>
@@ -386,7 +386,7 @@ export function StationForm({
                     render={({ field: f }) => (
                       <FormItem>
                         <FormLabel>{t("status", "Status")}</FormLabel>
-                        <Select onValueChange={f.onChange} defaultValue={f.value}>
+                        <Select onValueChange={f.onChange} defaultValue={f.value} disabled={isGeocoding}>
                            <FormControl><SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger></FormControl>
                            <SelectContent>
                             <SelectItem value="available">{t("available", "Available")}</SelectItem>
@@ -406,7 +406,7 @@ export function StationForm({
                     render={({ field: f }) => (
                       <FormItem>
                         <FormLabel>{t("power", "Power (kW)")}</FormLabel>
-                        <FormControl><Input type="number" step="any" {...f} /></FormControl>
+                        <FormControl><Input type="number" step="any" {...f} disabled={isGeocoding} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -417,7 +417,7 @@ export function StationForm({
                     render={({ field: f }) => (
                       <FormItem>
                         <FormLabel>{t("pricePerKWh", "Price (UZS/kWh)")} ({t("optional", "Optional")})</FormLabel>
-                        <FormControl><Input type="number" step="any" {...f} /></FormControl>
+                        <FormControl><Input type="number" step="any" {...f} disabled={isGeocoding} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -431,6 +431,7 @@ export function StationForm({
                     onClick={() => remove(index)}
                     className="absolute top-2 right-2 text-destructive hover:text-destructive"
                     aria-label={t("removePort", "Remove port")}
+                    disabled={isGeocoding}
                     >
                     <Trash2 className="h-4 w-4" />
                     </Button>
@@ -442,6 +443,7 @@ export function StationForm({
               variant="outline"
               onClick={() => append({ id: generatePortId(), type: "Type 2", powerKW: 22, status: "available", pricePerKWh: 0 })}
               className="flex items-center gap-2"
+              disabled={isGeocoding}
             >
               <PlusCircle className="h-4 w-4" /> {t("addPort", "Add Port")}
             </Button>
@@ -490,3 +492,5 @@ export function StationForm({
     </Form>
   );
 }
+
+    
