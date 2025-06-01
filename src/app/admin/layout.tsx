@@ -25,6 +25,12 @@ export default function AdminLayout({
     // Add more admin navigation items here
   ];
 
+  // If it's the login page, render only the children (the login page itself)
+  // The login page has its own full-screen layout
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
+
   return (
     <div className="min-h-screen w-full flex">
       <aside className="hidden md:flex flex-col w-64 border-r bg-background p-4 space-y-4">
