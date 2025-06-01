@@ -16,7 +16,7 @@ import { useLanguage } from "@/contexts/language-context";
 import { StationTypeIcon } from "@/components/icons/station-type-icon";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Globe, Clock, Settings, Zap, Tag, MapPin, PowerIcon, Navigation } from "lucide-react"; // Added Navigation
+import { Globe, Clock, Settings, Zap, Tag, MapPin, PowerIcon, Navigation } from "lucide-react";
 
 interface StationDetailsPanelProps {
   station: Station | null;
@@ -135,16 +135,16 @@ export function StationDetailsPanel({ station, isOpen, onClose }: StationDetails
             </div>
           </div>
         </ScrollArea>
-        <div className="p-4 border-t mt-auto bg-background flex gap-2">
+        <div className="p-4 border-t mt-auto bg-background flex flex-col sm:flex-row gap-2">
+          <Button type="button" className="flex-1 bg-primary hover:bg-primary/90" onClick={handleGetDirections}>
+            <Navigation className="mr-2 h-4 w-4" />
+            {t("getDirections", "Get Directions")}
+          </Button>
           <SheetClose asChild>
             <Button type="button" variant="outline" className="flex-1" onClick={onClose}>
               {t("close", "Close")}
             </Button>
           </SheetClose>
-          <Button type="button" className="flex-1 bg-primary hover:bg-primary/90" onClick={handleGetDirections}>
-            <Navigation className="mr-2 h-4 w-4" /> {/* Icon for directions */}
-            {t("getDirections", "Get Directions")}
-          </Button>
         </div>
       </SheetContent>
     </Sheet>
