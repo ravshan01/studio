@@ -82,5 +82,8 @@
   "zoomIn": "Приблизить",
   "zoomOut": "Отдалить",
   "noPortsAvailable": "Информация о портах отсутствует.",
-  "toggleMenu": "Переключить меню"
+  "toggleMenu": "Переключить меню",
+  "filterByType": "Фильтр по типу",
+  "allTypes": "Все типы"
 }
+

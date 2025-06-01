@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/layout/header";
 import { MapView } from "@/components/map/map-view";
 import { StationDetailsPanel } from "@/components/station-details-panel";
-import type { Station } from "@/types";
+import type { Station, StationType } from "@/types";
 import { useSelectedStation } from "@/contexts/selected-station-context";
 import { getStations } from "@/app/actions/stationActions"; // Import the server action
 import { useToast } from "@/hooks/use-toast";
@@ -21,6 +21,7 @@ export default function HomePage() {
   const [allStations, setAllStations] = useState<Station[]>([]);
   const [displayedStations, setDisplayedStations] = useState<Station[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedTypeFilter, setSelectedTypeFilter] = useState<StationType | "all">("all");
 
 
   useEffect(() => {
@@ -45,16 +46,21 @@ export default function HomePage() {
 
   useEffect(() => {
     const lowerSearchTerm = searchTerm.toLowerCase();
-    if (!lowerSearchTerm) {
-      setDisplayedStations(allStations); 
-      return;
+    let filtered = allStations;
+
+    if (lowerSearchTerm) {
+      filtered = filtered.filter(station =>
+        station.name.toLowerCase().includes(lowerSearchTerm) ||
+        (station.address || "").toLowerCase().includes(lowerSearchTerm)
+      );
     }
-    const filtered = allStations.filter(station =>
-      station.name.toLowerCase().includes(lowerSearchTerm) ||
-      (station.address || "").toLowerCase().includes(lowerSearchTerm)
-    );
+
+    if (selectedTypeFilter !== "all") {
+      filtered = filtered.filter(station => station.type === selectedTypeFilter);
+    }
+
     setDisplayedStations(filtered);
-  }, [searchTerm, allStations]); 
+  }, [searchTerm, allStations, selectedTypeFilter]); 
 
   const handleStationSelect = (station: Station) => {
     setSelectedStation(station);
@@ -78,7 +84,12 @@ export default function HomePage() {
             <p>{t("loadingStations", "Loading stations...")}</p>
           </div>
         ) : (
-          <MapView stations={displayedStations} onStationSelect={handleStationSelect} />
+          <MapView 
+            stations={displayedStations} 
+            onStationSelect={handleStationSelect}
+            selectedTypeFilter={selectedTypeFilter}
+            onTypeFilterChange={setSelectedTypeFilter}
+          />
         )}
       </main>
       <StationDetailsPanel
@@ -89,3 +100,4 @@ export default function HomePage() {
     </div>
   );
 }
+

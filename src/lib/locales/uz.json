@@ -82,5 +82,8 @@
   "zoomIn": "Yaqinlashtirish",
   "zoomOut": "Uzoqlashtirish",
   "noPortsAvailable": "Portlar haqida ma'lumot mavjud emas.",
-  "toggleMenu": "Menyuni ochish/yopish"
+  "toggleMenu": "Menyuni ochish/yopish",
+  "filterByType": "Turi bo'yicha filtr",
+  "allTypes": "Barcha turlar"
 }
+

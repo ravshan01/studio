@@ -2,18 +2,21 @@
 "use client";
 
 import { Map, useMap } from "@vis.gl/react-google-maps";
-import type { Station } from "@/types";
+import type { Station, StationType } from "@/types";
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from "@/lib/constants";
 import { StationMarker } from "./station-marker";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LocateFixed, Plus, Minus } from "lucide-react"; 
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/theme-context";
-
-interface MapViewProps {
-  stations: Station[];
-  onStationSelect: (station: Station) => void;
-}
+import { useLanguage } from "@/contexts/language-context";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Google Maps Dark Mode Style
 const mapStyleDark = [
@@ -190,8 +193,45 @@ function ZoomControls() {
   );
 }
 
+interface StationTypeFilterControlProps {
+  selectedType: StationType | "all";
+  onTypeChange: (type: StationType | "all") => void;
+}
 
-export function MapView({ stations, onStationSelect }: MapViewProps) {
+function StationTypeFilterControl({ selectedType, onTypeChange }: StationTypeFilterControlProps) {
+  const { t } = useLanguage();
+  const stationTypes: (StationType | "all")[] = ["all", "AC", "DC", "Hybrid"];
+
+  return (
+    <div className="absolute top-4 right-4 z-10 bg-background p-1.5 rounded-md shadow-lg border">
+      <Select
+        value={selectedType}
+        onValueChange={(value) => onTypeChange(value as StationType | "all")}
+      >
+        <SelectTrigger className="w-[180px] h-9 text-sm">
+          <SelectValue placeholder={t("filterByType", "Filter by type")} />
+        </SelectTrigger>
+        <SelectContent>
+          {stationTypes.map((type) => (
+            <SelectItem key={type} value={type} className="text-sm">
+              {type === "all" ? t("allTypes", "All Types") : t(type, type)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+interface MapViewProps {
+  stations: Station[];
+  onStationSelect: (station: Station) => void;
+  selectedTypeFilter: StationType | "all";
+  onTypeFilterChange: (type: StationType | "all") => void;
+}
+
+
+export function MapView({ stations, onStationSelect, selectedTypeFilter, onTypeFilterChange }: MapViewProps) {
   const { theme } = useTheme();
   
   return (
@@ -214,8 +254,13 @@ export function MapView({ stations, onStationSelect }: MapViewProps) {
           />
         ))}
       </Map>
+      <StationTypeFilterControl 
+        selectedType={selectedTypeFilter}
+        onTypeChange={onTypeFilterChange}
+      />
       <ZoomControls />
       <UserLocationButton />
     </div>
   );
 }
+
