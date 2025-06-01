@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -12,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { Station } from "@/types";
-import { MoreHorizontal, Edit2, Trash2 } from "lucide-react";
+import { MoreHorizontal, Trash2 } from "lucide-react"; // Removed Edit2 as it's no longer in the menu
 import { useLanguage } from "@/contexts/language-context";
 import {
   AlertDialog,
@@ -25,7 +26,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Card, CardContent } from "@/components/ui/card"; // Added Card and CardContent import
+import { Card, CardContent } from "@/components/ui/card";
 
 interface StationsTableProps {
   stations: Station[];
@@ -58,7 +59,11 @@ export function StationsTable({ stations, onEdit, onDelete }: StationsTableProps
               </TableRow>
             )}
             {stations.map((station) => (
-              <TableRow key={station.id}>
+              <TableRow 
+                key={station.id} 
+                onClick={() => onEdit(station)} 
+                className="cursor-pointer hover:bg-muted/50"
+              >
                 <TableCell className="font-medium">{station.name}</TableCell>
                 <TableCell className="max-w-xs truncate">{station.address}</TableCell>
                 <TableCell>
@@ -67,21 +72,22 @@ export function StationsTable({ stations, onEdit, onDelete }: StationsTableProps
                   </Badge>
                 </TableCell>
                 <TableCell className="text-center">{station.ports.length}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right" onClick={(e) => e.stopPropagation()} > {/* Stop propagation for the cell containing actions */}
                   <AlertDialog>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()}>
                           <MoreHorizontal className="h-4 w-4" />
                           <span className="sr-only">{t("actions", "Actions")}</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => onEdit(station)} className="flex items-center gap-2">
-                          <Edit2 className="h-4 w-4" /> {t("edit", "Edit")}
-                        </DropdownMenuItem>
+                        {/* Edit option removed as row click handles it */}
                         <AlertDialogTrigger asChild>
-                          <DropdownMenuItem className="flex items-center gap-2 text-destructive focus:text-destructive focus:bg-destructive/10">
+                          <DropdownMenuItem 
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center gap-2 text-destructive focus:text-destructive focus:bg-destructive/10"
+                          >
                             <Trash2 className="h-4 w-4" /> {t("delete", "Delete")}
                           </DropdownMenuItem>
                         </AlertDialogTrigger>
