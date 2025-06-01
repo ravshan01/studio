@@ -34,7 +34,8 @@
   "stationName": "Stansiya nomi",
   "latitude": "Kenglik",
   "longitude": "Uzunlik",
-  "save": "Saqlash",
+  "save": "Stansiyani saqlash",
+  "saveChanges": "O'zgarishlarni saqlash",
   "cancel": "Bekor qilish",
   "delete": "O'chirish",
   "confirmDelete": "Haqiqatan ham ushbu stansiyani oʻchirib tashlamoqchimisiz?",
@@ -54,6 +55,7 @@
   "addPort": "Port qo'shish",
   "pricePerKWh": "Narx (UZS/kVt·soat)",
   "saving": "Saqlanmoqda...",
+  "deleting": "O'chirilmoqda...",
   "noStationsFound": "Stansiyalar topilmadi.",
   "confirmDeleteTitle": "O'chirishni tasdiqlang",
   "confirmDeleteStationMsg": "\"{stationName}\" nomli stansiyani o'chirib tashlashni xohlaysizmi? Bu amalni bekor qilib bo'lmaydi.",
@@ -78,5 +80,7 @@
   "toggleMenu": "Menyuni ochish/yopish",
   "filterByType": "Turi bo'yicha filtr",
   "allTypes": "Barcha turlar",
-  "getDirections": "Marshrutni qurish"
+  "getDirections": "Marshrutni qurish",
+  "port": "Port",
+  "deleteStationButtonLabel": "Stansiyani o'chirish"
 }

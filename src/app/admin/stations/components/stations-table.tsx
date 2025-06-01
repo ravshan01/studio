@@ -11,9 +11,8 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { Station } from "@/types";
-import { MoreHorizontal, Trash2 } from "lucide-react"; // Removed Edit2 as it's no longer in the menu
+import { Trash2 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import {
   AlertDialog,
@@ -59,9 +58,9 @@ export function StationsTable({ stations, onEdit, onDelete }: StationsTableProps
               </TableRow>
             )}
             {stations.map((station) => (
-              <TableRow 
-                key={station.id} 
-                onClick={() => onEdit(station)} 
+              <TableRow
+                key={station.id}
+                onClick={() => onEdit(station)}
                 className="cursor-pointer hover:bg-muted/50"
               >
                 <TableCell className="font-medium">{station.name}</TableCell>
@@ -72,44 +71,36 @@ export function StationsTable({ stations, onEdit, onDelete }: StationsTableProps
                   </Badge>
                 </TableCell>
                 <TableCell className="text-center">{station.ports.length}</TableCell>
-                <TableCell className="text-right" onClick={(e) => e.stopPropagation()} > {/* Stop propagation for the cell containing actions */}
+                <TableCell className="text-right" onClick={(e) => e.stopPropagation()} >
                   <AlertDialog>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()}>
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">{t("actions", "Actions")}</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        {/* Edit option removed as row click handles it */}
-                        <AlertDialogTrigger asChild>
-                          <DropdownMenuItem 
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex items-center gap-2 text-destructive focus:text-destructive focus:bg-destructive/10"
-                          >
-                            <Trash2 className="h-4 w-4" /> {t("delete", "Delete")}
-                          </DropdownMenuItem>
-                        </AlertDialogTrigger>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                     <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>{t("confirmDeleteTitle", "Confirm Deletion")}</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            {t("confirmDeleteStationMsg", `Are you sure you want to delete station "${station.name}"? This action cannot be undone.`)}
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>{t("cancel", "Cancel")}</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={async () => await onDelete(station.id)}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          >
-                            {t("delete", "Delete")}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        aria-label={t("delete", "Delete")}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>{t("confirmDeleteTitle", "Confirm Deletion")}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {t("confirmDeleteStationMsg", `Are you sure you want to delete station "${station.name}"? This action cannot be undone.`).replace("{stationName}", station.name)}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>{t("cancel", "Cancel")}</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={async () => await onDelete(station.id)}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          {t("delete", "Delete")}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
                   </AlertDialog>
                 </TableCell>
               </TableRow>

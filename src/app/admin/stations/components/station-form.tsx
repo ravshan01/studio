@@ -30,11 +30,22 @@ import { Map, AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from "@/lib/constants";
 import { useCallback, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const generatePortId = () => `port_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 
 const portSchema = z.object({
-  id: z.string(), // Ensure ID is part of the schema
+  id: z.string(),
   type: z.enum(["Type 1", "Type 2", "CCS", "CHAdeMO"]),
   powerKW: z.coerce.number().min(1, "Power must be positive"),
   status: z.enum(["available", "occupied", "out_of_order"]),
@@ -52,21 +63,19 @@ const stationFormSchema = z.object({
   ports: z.array(portSchema).min(1, "At least one port is required"),
 });
 
-// This type is what the form will handle.
-// It can include an 'id' if we are editing, or not if creating.
 export type StationFormData = z.infer<typeof stationFormSchema> & { id?: string };
-
 
 interface StationFormProps {
   initialData?: Station | null;
-  // onSubmit now takes StationFormData which might include an ID for updates
-  onSubmit: (data: StationFormData) => Promise<void>; 
+  onSubmit: (data: StationFormData) => Promise<void>;
   onCancel: () => void;
+  onDelete?: (stationId: string) => Promise<void>; // Optional delete handler
   isSubmitting?: boolean;
+  isDeleting?: boolean; // Optional deleting state
 }
 
 function FormMapZoomControls() {
-  const map = useMap(); 
+  const map = useMap();
   const { t } = useLanguage();
 
   const handleZoomIn = () => {
@@ -113,8 +122,14 @@ function FormMapZoomControls() {
   );
 }
 
-
-export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: StationFormProps) {
+export function StationForm({
+  initialData,
+  onSubmit,
+  onCancel,
+  onDelete,
+  isSubmitting,
+  isDeleting,
+}: StationFormProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [isGeocoding, setIsGeocoding] = useState(false);
@@ -123,8 +138,8 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
     resolver: zodResolver(stationFormSchema),
     defaultValues: initialData
       ? {
-          ...initialData, // Spread all properties of initialData, including its 'id'
-          ports: initialData.ports.map(p => ({...p, id: p.id || generatePortId() })) 
+          ...initialData,
+          ports: initialData.ports.map(p => ({...p, id: p.id || generatePortId() }))
         }
       : {
           name: "",
@@ -135,7 +150,6 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
           operator: "",
           openingHours: "24/7",
           ports: [{ id: generatePortId(), type: "Type 2", powerKW: 22, status: "available", pricePerKWh: 0 }],
-          // No 'id' for new stations; Firestore will generate it
         },
   });
 
@@ -167,17 +181,16 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
         if (results && results[0]) {
           form.setValue("address", results[0].formatted_address, { shouldValidate: true, shouldDirty: true });
         } else {
-          form.setValue("address", "", { shouldValidate: true, shouldDirty: true }); 
+          form.setValue("address", "", { shouldValidate: true, shouldDirty: true });
           toast({ title: t("noAddressFound", "No address found for this location."), variant: "default" });
         }
       } else {
-        form.setValue("address", "", { shouldValidate: true, shouldDirty: true }); 
+        form.setValue("address", "", { shouldValidate: true, shouldDirty: true });
         toast({ title: t("geocodingFailed", "Address lookup failed."), description: `Geocoder failed due to: ${status}`, variant: "destructive" });
         console.error(`Geocoder failed due to: ${status}`);
       }
     });
   }, [form, t, toast]);
-
 
   const handleMapClick = useCallback((event: google.maps.MapMouseEvent) => {
     if (event.detail.latLng) {
@@ -201,12 +214,18 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
 
   const handleSubmit = (data: StationFormData) => {
     const dataToSubmit: StationFormData = { ...data };
-    if (initialData?.id) { // If editing, include the existing ID
+    if (initialData?.id) {
         dataToSubmit.id = initialData.id;
     }
     onSubmit(dataToSubmit);
   };
 
+  const handleDeleteConfirm = async () => {
+    if (initialData?.id && onDelete) {
+      await onDelete(initialData.id);
+      // Parent (AdminStationsPage) will handle toast and navigation/form closing
+    }
+  };
 
   return (
     <Form {...form}>
@@ -290,7 +309,7 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
                         gestureHandling={"greedy"}
                         disableDefaultUI={true}
                         onClick={handleMapClick}
-                        mapId="station_form_map_id" 
+                        mapId="station_form_map_id"
                         className="h-full w-full"
                     >
                         { (watchedLatitude && watchedLongitude) && (
@@ -429,16 +448,45 @@ export function StationForm({ initialData, onSubmit, onCancel, isSubmitting }: S
           </CardContent>
         </Card>
 
-        <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting || isGeocoding}>
-            {t("cancel", "Cancel")}
-          </Button>
-          <Button type="submit" disabled={isSubmitting || isGeocoding} className="bg-primary hover:bg-primary/90">
-            {isSubmitting ? t("saving", "Saving...") : t("save", "Save Station")}
-          </Button>
+        <div className="flex flex-col sm:flex-row justify-end gap-4">
+          {initialData?.id && onDelete && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button type="button" variant="destructive" className="sm:mr-auto" disabled={isSubmitting || isDeleting || isGeocoding}>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  {isDeleting ? t("deleting", "Deleting...") : t("deleteStationButtonLabel", "Delete Station")}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{t("confirmDeleteTitle", "Confirm Deletion")}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                     {t("confirmDeleteStationMsg", `Are you sure you want to delete station "${initialData.name}"? This action cannot be undone.`).replace("{stationName}", initialData.name)}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={isDeleting}>{t("cancel", "Cancel")}</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteConfirm}
+                    disabled={isDeleting}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {isDeleting ? t("deleting", "Deleting...") :t("delete", "Delete")}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-2 ml-auto"> {/* Wrapper for cancel and save */}
+            <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting || isDeleting || isGeocoding}>
+              {t("cancel", "Cancel")}
+            </Button>
+            <Button type="submit" disabled={isSubmitting || isDeleting || isGeocoding} className="bg-primary hover:bg-primary/90">
+              {isSubmitting ? t("saving", "Saving...") : (initialData ? t("saveChanges", "Save Changes") : t("save", "Save Station"))}
+            </Button>
+          </div>
         </div>
       </form>
     </Form>
   );
 }
-

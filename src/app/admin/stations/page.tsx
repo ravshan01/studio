@@ -22,6 +22,7 @@ export default function AdminStationsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingStation, setEditingStation] = useState<Station | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   const loadStations = async () => {
@@ -31,19 +32,19 @@ export default function AdminStationsPage() {
       setStations(data);
     } catch (error) {
       toast({ title: t("errorFetchingStations", "Error fetching stations"), description: String(error), variant: "destructive" });
-      setStations([]); 
+      setStations([]);
     }
     setIsLoading(false);
   };
 
   useEffect(() => {
     loadStations();
-  }, []);
+  }, [t, toast]); // Added t and toast to dependencies as they are used in loadStations error handling
 
   useEffect(() => {
     const lowerSearchTerm = searchTerm.toLowerCase();
     setFilteredStations(
-      stations.filter(station => 
+      stations.filter(station =>
         station.name.toLowerCase().includes(lowerSearchTerm) ||
         (station.address || "").toLowerCase().includes(lowerSearchTerm)
       )
@@ -61,24 +62,31 @@ export default function AdminStationsPage() {
   };
 
   const handleDeleteStation = async (stationId: string) => {
+    setIsDeleting(true);
     try {
       await deleteStation(stationId);
       toast({ title: t("stationDeleted", "Station deleted successfully") });
-      await loadStations(); 
+      await loadStations();
+      // If the deleted station was being edited, close the form
+      if (editingStation?.id === stationId) {
+        setIsFormOpen(false);
+        setEditingStation(null);
+      }
     } catch (error) {
       toast({ title: t("errorDeletingStation", "Error deleting station"), description: String(error), variant: "destructive" });
     }
+    setIsDeleting(false);
   };
 
   const handleFormSubmit = async (data: Omit<Station, 'id'> & { id?: string }) => {
     setIsSubmitting(true);
     try {
       if (editingStation && editingStation.id) {
-        const { id, ...updateData } = data; // id is not part of updateData
+        const { id, ...updateData } = data;
         await updateStation(editingStation.id, updateData);
         toast({ title: t("stationUpdated", "Station updated") });
       } else {
-        const { id, ...addData } = data; // id might be undefined or an old client-side one
+        const { id, ...addData } = data;
         await addStation(addData);
         toast({ title: t("stationAdded", "Station added") });
       }
@@ -102,7 +110,9 @@ export default function AdminStationsPage() {
           initialData={editingStation}
           onSubmit={handleFormSubmit}
           onCancel={handleFormCancel}
+          onDelete={editingStation?.id ? handleDeleteStation : undefined}
           isSubmitting={isSubmitting}
+          isDeleting={isDeleting}
         />
     );
   }
@@ -121,7 +131,7 @@ export default function AdminStationsPage() {
            <CardTitle>{t("filterStations", "Filter Stations")}</CardTitle>
         </CardHeader>
         <CardContent>
-            <Input 
+            <Input
                 type="text"
                 placeholder={t("searchByNameOrAddress", "Search by name or address...")}
                 value={searchTerm}

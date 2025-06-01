@@ -34,7 +34,8 @@
   "stationName": "Название станции",
   "latitude": "Широта",
   "longitude": "Долгота",
-  "save": "Сохранить",
+  "save": "Сохранить станцию",
+  "saveChanges": "Сохранить изменения",
   "cancel": "Отмена",
   "delete": "Удалить",
   "confirmDelete": "Вы уверены, что хотите удалить эту станцию?",
@@ -54,6 +55,7 @@
   "addPort": "Добавить порт",
   "pricePerKWh": "Цена (UZS/кВтч)",
   "saving": "Сохранение...",
+  "deleting": "Удаление...",
   "noStationsFound": "Станции не найдены.",
   "confirmDeleteTitle": "Подтвердить удаление",
   "confirmDeleteStationMsg": "Вы уверены, что хотите удалить станцию \"{stationName}\"? Это действие нельзя будет отменить.",
@@ -78,5 +80,7 @@
   "toggleMenu": "Переключить меню",
   "filterByType": "Фильтр по типу",
   "allTypes": "Все типы",
-  "getDirections": "Проложить маршрут"
+  "getDirections": "Проложить маршрут",
+  "port": "Порт",
+  "deleteStationButtonLabel": "Удалить станцию"
 }

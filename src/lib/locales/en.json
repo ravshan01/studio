@@ -34,7 +34,8 @@
   "stationName": "Station Name",
   "latitude": "Latitude",
   "longitude": "Longitude",
-  "save": "Save",
+  "save": "Save Station",
+  "saveChanges": "Save Changes",
   "cancel": "Cancel",
   "delete": "Delete",
   "confirmDelete": "Are you sure you want to delete this station?",
@@ -54,6 +55,7 @@
   "addPort": "Add Port",
   "pricePerKWh": "Price (UZS/kWh)",
   "saving": "Saving...",
+  "deleting": "Deleting...",
   "noStationsFound": "No stations found.",
   "confirmDeleteTitle": "Confirm Deletion",
   "confirmDeleteStationMsg": "Are you sure you want to delete station \"{stationName}\"? This action cannot be undone.",
@@ -78,5 +80,7 @@
   "toggleMenu": "Toggle Menu",
   "filterByType": "Filter by type",
   "allTypes": "All Types",
-  "getDirections": "Get Directions"
+  "getDirections": "Get Directions",
+  "port": "Port",
+  "deleteStationButtonLabel": "Delete Station"
 }
