@@ -208,7 +208,7 @@ function StationTypeFilterControl({ selectedType, onTypeChange }: StationTypeFil
         value={selectedType}
         onValueChange={(value) => onTypeChange(value as StationType | "all")}
       >
-        <SelectTrigger className="w-[180px] h-9 text-sm">
+        <SelectTrigger className="w-[160px] h-9 text-sm">
           <SelectValue placeholder={t("filterByType", "Filter by type")} />
         </SelectTrigger>
         <SelectContent>
