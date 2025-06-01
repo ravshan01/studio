@@ -135,7 +135,7 @@ export function StationDetailsPanel({ station, isOpen, onClose }: StationDetails
             </div>
           </div>
         </ScrollArea>
-        <div className="p-4 border-t mt-auto bg-background flex flex-col sm:flex-row gap-2">
+        <div className="p-4 border-t mt-auto bg-background flex flex-col sm:flex-row-reverse gap-2">
           <Button type="button" className="flex-1 bg-primary hover:bg-primary/90" onClick={handleGetDirections}>
             <Navigation className="mr-2 h-4 w-4" />
             {t("getDirections", "Get Directions")}
