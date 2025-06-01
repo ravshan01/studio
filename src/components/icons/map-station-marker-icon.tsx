@@ -19,18 +19,20 @@ export function MapStationMarkerIcon({
   circleStrokeColor,
 }: MapStationMarkerIconProps) {
   const circleStrokeThickness = Math.max(1.5, size / 12);
-  const innerSymbolSize = size * 0.65; // Adjusted for potentially wider/taller icons
+  const innerSymbolSize = size * 0.6; // Adjusted for potentially wider/taller icons
 
   const symbolX = (size - innerSymbolSize) / 2;
   const symbolY = (size - innerSymbolSize) / 2;
 
   let symbolPath;
   let viewBox = "0 0 24 24"; // Default viewBox for Lucide icons
-  let useFill = false; // Default to stroke-based icons
+  let useFill = false; 
+  let SvgStrokeWidth: string | number = 2;
+
 
   switch (type) {
     case "AC":
-      // Lucide 'Plug' icon
+      // Lucide 'Plug' icon path
       symbolPath = (
         <>
           <path d="M12 22v-5"/>
@@ -39,39 +41,36 @@ export function MapStationMarkerIcon({
           <path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/>
         </>
       );
+      useFill = false;
+      SvgStrokeWidth = 2;
       break;
     case "DC":
-      // Lightning Bolt Icon (existing)
+      // Lucide 'Zap' icon path (lightning bolt)
       symbolPath = (
-        <path
-          d="M7 21L10.2632 13H6L17 3L13.7368 11H18L7 21Z"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
       );
-      useFill = true; // DC icon uses fill
+      useFill = true; // Zap icon is often better filled for emphasis
+      SvgStrokeWidth = 0;
       break;
     case "Hybrid":
-      // Lucide 'Cable' icon
+      // Lucide 'PlugZap' icon path
       symbolPath = (
         <>
-          <path d="M11 18.5v-1.5a2.5 2.5 0 0 0-5 0V18c0 2.8 2.2 5 5 5h0a5 5 0 0 0 5-5v-.5a2.5 2.5 0 0 0-5 0v1.5"/>
-          <path d="M9 17V8a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1"/>
-          <path d="M21 6A2.5 2.5 0 0 0 18.5 3H0"/>
-          <path d="M3 6A2.5 2.5 0 0 0 .5 3H0"/>
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8Z"/>
+            <path d="M18 6h2a2 2 0 0 1 2 2v2"/>
+            <path d="M18 18h2a2 2 0 0 0 2-2v-2"/>
         </>
       );
+      useFill = false;
+      SvgStrokeWidth = 2;
       break;
     default:
-      // Fallback to lightning bolt if type is unrecognized
+      // Fallback to a generic symbol (e.g., Zap for unknown)
       symbolPath = (
-        <path
-          d="M7 21L10.2632 13H6L17 3L13.7368 11H18L7 21Z"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
       );
       useFill = true;
+      SvgStrokeWidth = 0;
       break;
   }
 
@@ -98,7 +97,7 @@ export function MapStationMarkerIcon({
           viewBox={viewBox}
           fill={useFill ? symbolColor : "none"}
           stroke={useFill ? "none" : symbolColor}
-          strokeWidth={useFill ? "0" : "2"} // Standard stroke width for line icons
+          strokeWidth={SvgStrokeWidth}
           strokeLinecap="round"
           strokeLinejoin="round"
           xmlns="http://www.w3.org/2000/svg"
