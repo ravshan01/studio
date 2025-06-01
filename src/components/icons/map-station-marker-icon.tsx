@@ -19,23 +19,25 @@ export function MapStationMarkerIcon({
   circleStrokeColor,
 }: MapStationMarkerIconProps) {
   const circleStrokeThickness = Math.max(1.5, size / 12);
-  const innerSymbolSize = size * 0.70; // Adjusted slightly for potentially wider icons
+  const innerSymbolSize = size * 0.65; // Adjusted for potentially wider/taller icons
 
   const symbolX = (size - innerSymbolSize) / 2;
   const symbolY = (size - innerSymbolSize) / 2;
 
   let symbolPath;
-  let viewBox = "0 0 24 24"; // Default viewBox
+  let viewBox = "0 0 24 24"; // Default viewBox for Lucide icons
+  let useFill = false; // Default to stroke-based icons
 
   switch (type) {
     case "AC":
-      // Simple Power Plug Icon
+      // Lucide 'Plug' icon
       symbolPath = (
-        <path
-          d="M16 7V3h-2v4h-4V3H8v4h-.01C6.89 7 6 7.89 6 8.99v5.02C6 15.1 6.89 16 7.99 16h7.02c1.1 0 1.99-.9 1.99-2v-5.02C17.01 7.89 16.11 7 16 7z"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <>
+          <path d="M12 22v-5"/>
+          <path d="M9 8V2"/>
+          <path d="M15 8V2"/>
+          <path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/>
+        </>
       );
       break;
     case "DC":
@@ -47,13 +49,16 @@ export function MapStationMarkerIcon({
           strokeLinejoin="round"
         />
       );
+      useFill = true; // DC icon uses fill
       break;
     case "Hybrid":
-      // Blend Icon (from Lucide)
+      // Lucide 'Cable' icon
       symbolPath = (
         <>
-          <path d="M18 16H6a4 4 0 1 0 0-8h12a4 4 0 0 1 0 8Z" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M12 12v9" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M11 18.5v-1.5a2.5 2.5 0 0 0-5 0V18c0 2.8 2.2 5 5 5h0a5 5 0 0 0 5-5v-.5a2.5 2.5 0 0 0-5 0v1.5"/>
+          <path d="M9 17V8a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1"/>
+          <path d="M21 6A2.5 2.5 0 0 0 18.5 3H0"/>
+          <path d="M3 6A2.5 2.5 0 0 0 .5 3H0"/>
         </>
       );
       break;
@@ -66,6 +71,7 @@ export function MapStationMarkerIcon({
           strokeLinejoin="round"
         />
       );
+      useFill = true;
       break;
   }
 
@@ -90,9 +96,11 @@ export function MapStationMarkerIcon({
           width={innerSymbolSize}
           height={innerSymbolSize}
           viewBox={viewBox}
-          fill={symbolColor}
-          stroke={type === 'Hybrid' ? symbolColor : "none"} // Hybrid icon uses stroke, others fill
-          strokeWidth={type === 'Hybrid' ? "2" : "0"} // Stroke width for Hybrid icon
+          fill={useFill ? symbolColor : "none"}
+          stroke={useFill ? "none" : symbolColor}
+          strokeWidth={useFill ? "0" : "2"} // Standard stroke width for line icons
+          strokeLinecap="round"
+          strokeLinejoin="round"
           xmlns="http://www.w3.org/2000/svg"
         >
           {symbolPath}
