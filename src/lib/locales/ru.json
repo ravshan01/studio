@@ -2,6 +2,7 @@
 {
   "appName": "ElectroCar Зарядка",
   "adminLogin": "Вход для администратора",
+  "admin": "Админ",
   "chargingStations": "Зарядные станции",
   "stationDetails": "Детали станции",
   "address": "Адрес",

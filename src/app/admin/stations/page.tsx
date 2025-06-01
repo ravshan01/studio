@@ -126,7 +126,7 @@ export default function AdminStationsPage() {
                 placeholder={t("searchByNameOrAddress", "Search by name or address...")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="max-w-sm"
+                className="w-full sm:max-w-sm"
             />
         </CardContent>
       </Card>

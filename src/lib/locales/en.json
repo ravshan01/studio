@@ -2,6 +2,7 @@
 {
   "appName": "ElectroCar Charging",
   "adminLogin": "Admin Login",
+  "admin": "Admin",
   "chargingStations": "Charging Stations",
   "stationDetails": "Station Details",
   "address": "Address",

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSelector } from "@/components/language-selector";
 import { useLanguage } from "@/contexts/language-context";
-import { Waypoints, Home, Search as SearchIcon } from "lucide-react";
+import { Waypoints, Home, Search as SearchIcon, UserCog } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 interface HeaderProps {
@@ -42,14 +42,18 @@ export function Header({ searchTerm, onSearchChange, showSearch = false }: Heade
         <div className="ml-auto flex items-center gap-2 sm:gap-4">
           <LanguageSelector />
           <ThemeToggle />
-          <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
-            <Link href="/">
+          <Button asChild variant="outline" size="sm">
+            <Link href="/" className="flex items-center">
               <Home className="h-4 w-4" />
-              {t("home", "Home")}
+              <span className="hidden sm:inline ml-1">{t("home", "Home")}</span>
             </Link>
           </Button>
            <Button asChild variant="outline" size="sm">
-            <Link href="/admin/login">{t("adminLogin", "Admin Login")}</Link>
+            <Link href="/admin/login" className="flex items-center">
+              <UserCog className="h-4 w-4 sm:mr-1" />
+              <span className="hidden sm:inline">{t("adminLogin", "Admin Login")}</span>
+              <span className="sm:hidden inline ml-1">{t("admin", "Admin")}</span>
+            </Link>
           </Button>
         </div>
       </div>

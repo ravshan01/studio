@@ -90,9 +90,9 @@ export default function AdminLayout({
           </Sheet>
           <div className="ml-auto flex items-center gap-2">
             <Button asChild variant="outline" size="sm">
-              <Link href="/">
+              <Link href="/" className="flex items-center">
                 <Map className="h-4 w-4" />
-                {t("viewMap", "View Map")}
+                <span className="hidden sm:inline ml-1">{t("viewMap", "View Map")}</span>
               </Link>
             </Button>
             <LanguageSelector />

@@ -2,6 +2,7 @@
 {
   "appName": "ElectroCar Zaryadlash",
   "adminLogin": "Administrator kirishi",
+  "admin": "Admin",
   "chargingStations": "Zaryadlash stansiyalari",
   "stationDetails": "Stansiya tafsilotlari",
   "address": "Manzil",

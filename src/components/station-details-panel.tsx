@@ -45,7 +45,7 @@ export function StationDetailsPanel({ station, isOpen, onClose }: StationDetails
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent className="w-full sm:max-w-md p-0 flex flex-col" side="right">
+      <SheetContent className="w-full md:max-w-md p-0 flex flex-col" side="right">
         <SheetHeader className="p-6 pb-4 border-b">
           <SheetTitle className="flex items-center gap-3 text-xl"> {/* Increased gap */}
             <StationTypeIcon type={station.type} className="h-7 w-7 text-primary" /> {/* Slightly larger icon */}
