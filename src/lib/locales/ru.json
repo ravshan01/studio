@@ -84,6 +84,6 @@
   "noPortsAvailable": "Информация о портах отсутствует.",
   "toggleMenu": "Переключить меню",
   "filterByType": "Фильтр по типу",
-  "allTypes": "Все типы"
+  "allTypes": "Все типы",
+  "getDirections": "Проложить маршрут"
 }
-

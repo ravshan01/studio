@@ -16,7 +16,7 @@ import { useLanguage } from "@/contexts/language-context";
 import { StationTypeIcon } from "@/components/icons/station-type-icon";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Globe, Clock, Settings, Zap, Tag, BatteryCharging, MapPin, PowerIcon } from "lucide-react";
+import { Globe, Clock, Settings, Zap, Tag, MapPin, PowerIcon, Navigation } from "lucide-react"; // Added Navigation
 
 interface StationDetailsPanelProps {
   station: Station | null;
@@ -27,13 +27,13 @@ interface StationDetailsPanelProps {
 const getStatusBadgeVariant = (status: Port["status"]): "default" | "secondary" | "destructive" | "outline" => {
   switch (status) {
     case "available":
-      return "default"; // Using primary color, often green-ish or blue-ish
+      return "default";
     case "occupied":
-      return "secondary"; // Neutral, like gray
+      return "secondary";
     case "out_of_order":
-      return "destructive"; // Red
+      return "destructive";
     default:
-      return "outline"; // A fallback
+      return "outline";
   }
 };
 
@@ -43,16 +43,22 @@ export function StationDetailsPanel({ station, isOpen, onClose }: StationDetails
 
   if (!station) return null;
 
+  const handleGetDirections = () => {
+    if (!station) return;
+    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${station.latitude},${station.longitude}`;
+    window.open(mapsUrl, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <SheetContent className="w-full md:max-w-md p-0 flex flex-col" side="right">
         <SheetHeader className="p-6 pb-4 border-b">
-          <SheetTitle className="flex items-center gap-3 text-xl"> {/* Increased gap */}
-            <StationTypeIcon type={station.type} className="h-7 w-7 text-primary" /> {/* Slightly larger icon */}
+          <SheetTitle className="flex items-center gap-3 text-xl">
+            <StationTypeIcon type={station.type} className="h-7 w-7 text-primary" />
             {station.name}
           </SheetTitle>
           {station.address && (
-            <SheetDescription className="flex items-start gap-2 text-sm pt-1"> {/* Align items-start for multi-line addresses */}
+            <SheetDescription className="flex items-start gap-2 text-sm pt-1">
               <MapPin className="h-4 w-4 mt-0.5 shrink-0"/>
               <span>{station.address}</span>
             </SheetDescription>
@@ -63,7 +69,7 @@ export function StationDetailsPanel({ station, isOpen, onClose }: StationDetails
           <div className="p-6 space-y-6">
             <div>
               <h3 className="font-semibold text-md mb-3">{t("stationDetails", "Station Details")}</h3>
-              <div className="grid grid-cols-[auto,1fr] gap-x-3 gap-y-3 text-sm"> {/* Increased gap-y */}
+              <div className="grid grid-cols-[auto,1fr] gap-x-3 gap-y-3 text-sm">
                 <Globe className="h-5 w-5 text-muted-foreground self-center"/>
                 <div className="flex flex-col">
                     <span className="font-medium text-foreground">{t("type", "Type")}</span>
@@ -97,11 +103,11 @@ export function StationDetailsPanel({ station, isOpen, onClose }: StationDetails
               <h3 className="font-semibold text-md mb-3">{t("ports", "Ports")}</h3>
               {station.ports && station.ports.length > 0 ? (
                 <ul className="space-y-4">
-                  {station.ports.map((port, index) => ( // Added index for a more robust key if port.id is not perfectly unique temporarily
+                  {station.ports.map((port, index) => (
                     <li key={port.id || `port-${index}`} className="p-4 border rounded-lg shadow-sm bg-card hover:shadow-md transition-shadow">
                       <div className="flex justify-between items-center mb-3">
                         <div className="font-medium flex items-center gap-2 text-foreground">
-                           <PowerIcon className="h-5 w-5 text-primary" /> {/* Changed to PowerIcon for general port */}
+                           <PowerIcon className="h-5 w-5 text-primary" />
                            {port.type}
                         </div>
                         <Badge variant={getStatusBadgeVariant(port.status)} className="text-xs">
@@ -113,7 +119,7 @@ export function StationDetailsPanel({ station, isOpen, onClose }: StationDetails
                             <Zap className="h-4 w-4 shrink-0" />
                             <span>{t("power", "Power")}: {port.powerKW} kW</span>
                         </div>
-                        {typeof port.pricePerKWh === 'number' && ( // Check if price is a number
+                        {typeof port.pricePerKWh === 'number' && (
                            <div className="flex items-center gap-2 text-muted-foreground">
                             <Tag className="h-4 w-4 shrink-0" />
                             <span>{t("price", "Price")}: {port.pricePerKWh.toLocaleString()} UZS/kWh</span>
@@ -129,15 +135,18 @@ export function StationDetailsPanel({ station, isOpen, onClose }: StationDetails
             </div>
           </div>
         </ScrollArea>
-        <div className="p-4 border-t mt-auto bg-background"> {/* Added p-4 and bg for consistency */}
+        <div className="p-4 border-t mt-auto bg-background flex gap-2">
           <SheetClose asChild>
-            <Button type="button" variant="outline" className="w-full" onClick={onClose}>
+            <Button type="button" variant="outline" className="flex-1" onClick={onClose}>
               {t("close", "Close")}
             </Button>
           </SheetClose>
+          <Button type="button" className="flex-1 bg-primary hover:bg-primary/90" onClick={handleGetDirections}>
+            <Navigation className="mr-2 h-4 w-4" /> {/* Icon for directions */}
+            {t("getDirections", "Get Directions")}
+          </Button>
         </div>
       </SheetContent>
     </Sheet>
   );
 }
-

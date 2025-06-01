@@ -84,6 +84,6 @@
   "noPortsAvailable": "Portlar haqida ma'lumot mavjud emas.",
   "toggleMenu": "Menyuni ochish/yopish",
   "filterByType": "Turi bo'yicha filtr",
-  "allTypes": "Barcha turlar"
+  "allTypes": "Barcha turlar",
+  "getDirections": "Marshrutni qurish"
 }
-
