@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button"; // Added Button
+import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/language-context";
 import type { Language as LangType } from "@/types";
 import { LANGUAGES } from "@/lib/constants";
@@ -19,7 +19,7 @@ export function LanguageSelector() {
 
   return (
     <Select value={language} onValueChange={(value) => setLanguage(value as LangType)}>
-      <SelectTrigger asChild>
+      <SelectTrigger asChild className="w-10 p-0">
         <Button variant="ghost" size="icon" aria-label={t("language", "Language")}>
           <Globe className="h-5 w-5" />
         </Button>
@@ -34,3 +34,4 @@ export function LanguageSelector() {
     </Select>
   );
 }
+
