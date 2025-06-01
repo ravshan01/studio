@@ -18,7 +18,7 @@ export default function AdminLoginPage() {
     // Mock login logic
     // In a real app, you'd validate credentials and set a session/token
     console.log("Login attempt");
-    router.push("/admin/dashboard");
+    router.push("/admin/stations");
   };
 
   return (

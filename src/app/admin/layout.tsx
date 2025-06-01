@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ListChecks, LogOut, Menu, Users, Map } from "lucide-react";
+import { ListChecks, LogOut, Menu, Map } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSelector } from "@/components/language-selector";
@@ -20,7 +20,6 @@ export default function AdminLayout({
   const { t } = useLanguage();
 
   const navItems = [
-    { href: "/admin/dashboard", label: t("dashboard", "Dashboard"), icon: LayoutDashboard },
     { href: "/admin/stations", label: t("manageStations", "Stations"), icon: ListChecks },
     // Add more admin navigation items here
   ];
@@ -39,7 +38,7 @@ export default function AdminLayout({
           {navItems.map((item) => (
             <Button
               key={item.href}
-              variant={pathname === item.href ? "secondary" : "ghost"}
+              variant={pathname.startsWith(item.href) ? "secondary" : "ghost"}
               className="w-full justify-start"
               asChild
             >
@@ -83,7 +82,7 @@ export default function AdminLayout({
                     href={item.href}
                     className={cn(
                       "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
-                      pathname === item.href && "text-foreground bg-muted rounded-md py-2"
+                      pathname.startsWith(item.href) && "text-foreground bg-muted rounded-md py-2"
                     )}
                   >
                     <item.icon className="h-5 w-5" />
