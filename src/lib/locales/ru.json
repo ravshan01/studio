@@ -83,7 +83,6 @@
   "getDirections": "Проложить маршрут",
   "port": "Порт",
   "deleteStationButtonLabel": "Удалить станцию",
-
   "logout": "Выйти",
   "loginWithGoogle": "Войти через Google",
   "loginSuccessTitle": "Вход выполнен",
@@ -96,5 +95,16 @@
   "profile": "Профиль",
   "logoutSuccessTitle": "Выход выполнен",
   "logoutSuccessDesc": "Вы успешно вышли из системы.",
-  "logoutErrorTitle": "Ошибка выхода"
+  "logoutErrorTitle": "Ошибка выхода",
+  "advancedOperations": "Дополнительные операции",
+  "bulkImportButtonLabel": "Импортировать тестовые станции",
+  "bulkImportConfirmTitle": "Подтвердить импорт тестовых данных",
+  "bulkImportConfirmMsg": "Это действие попытается добавить все станции из файла тестовых данных в базу данных. Эта операция предназначена для начальной настройки. Многократный запуск может привести к созданию дубликатов. Вы уверены, что хотите продолжить?",
+  "confirm": "Подтвердить",
+  "bulkImportingInProgress": "Импорт...",
+  "bulkImportSuccessTitle": "Массовый импорт успешен",
+  "bulkImportPartialFailTitle": "Проблема с массовым импортом",
+  "bulkImportErrorTitle": "Ошибка массового импорта",
+  "bulkImportErrorsCount": "Ошибок: {count}",
+  "bulkImportWarning": "Предупреждение: Используйте эту функцию осторожно для начального заполнения данных. Она может создать дубликаты при запуске на существующем наборе данных."
 }

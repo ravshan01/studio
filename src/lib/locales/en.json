@@ -83,7 +83,6 @@
   "getDirections": "Get Directions",
   "port": "Port",
   "deleteStationButtonLabel": "Delete Station",
-
   "logout": "Logout",
   "loginWithGoogle": "Sign in with Google",
   "loginSuccessTitle": "Login Successful",
@@ -96,5 +95,16 @@
   "profile": "Profile",
   "logoutSuccessTitle": "Logged out",
   "logoutSuccessDesc": "You have been successfully logged out.",
-  "logoutErrorTitle": "Logout Failed"
+  "logoutErrorTitle": "Logout Failed",
+  "advancedOperations": "Advanced Operations",
+  "bulkImportButtonLabel": "Import Mock Stations",
+  "bulkImportConfirmTitle": "Confirm Mock Data Import",
+  "bulkImportConfirmMsg": "This will attempt to add all stations from the mock data file into the database. This operation is intended for initial setup. Running it multiple times may create duplicate entries. Are you sure you want to proceed?",
+  "confirm": "Confirm",
+  "bulkImportingInProgress": "Importing...",
+  "bulkImportSuccessTitle": "Bulk Import Successful",
+  "bulkImportPartialFailTitle": "Bulk Import Issue",
+  "bulkImportErrorTitle": "Bulk Import Failed",
+  "bulkImportErrorsCount": "Errors: {count}",
+  "bulkImportWarning": "Warning: Use this feature carefully for initial data population. It may create duplicates if run on an existing dataset."
 }

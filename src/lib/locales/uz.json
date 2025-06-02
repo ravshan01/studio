@@ -83,7 +83,6 @@
   "getDirections": "Marshrutni qurish",
   "port": "Port",
   "deleteStationButtonLabel": "Stansiyani o'chirish",
-
   "logout": "Chiqish",
   "loginWithGoogle": "Google orqali kirish",
   "loginSuccessTitle": "Muvaffaqiyatli kirish",
@@ -96,5 +95,16 @@
   "profile": "Profil",
   "logoutSuccessTitle": "Muvaffaqiyatli chiqish",
   "logoutSuccessDesc": "Siz tizimdan muvaffaqiyatli chiqdingiz.",
-  "logoutErrorTitle": "Chiqishda xatolik"
+  "logoutErrorTitle": "Chiqishda xatolik",
+  "advancedOperations": "Kengaytirilgan amallar",
+  "bulkImportButtonLabel": "Test stansiyalarini import qilish",
+  "bulkImportConfirmTitle": "Test ma'lumotlarini import qilishni tasdiqlang",
+  "bulkImportConfirmMsg": "Bu amal test ma'lumotlar faylidagi barcha stansiyalarni ma'lumotlar bazasiga qo'shishga harakat qiladi. Bu operatsiya dastlabki sozlash uchun mo'ljallangan. Bir necha marta ishga tushirish dublikat yozuvlarni yaratishi mumkin. Davom etishni xohlaysizmi?",
+  "confirm": "Tasdiqlash",
+  "bulkImportingInProgress": "Import qilinmoqda...",
+  "bulkImportSuccessTitle": "Ommaviy import muvaffaqiyatli",
+  "bulkImportPartialFailTitle": "Ommaviy importda muammo",
+  "bulkImportErrorTitle": "Ommaviy importda xatolik",
+  "bulkImportErrorsCount": "Xatolar: {count}",
+  "bulkImportWarning": "Ogohlantirish: Ushbu xususiyatdan dastlabki ma'lumotlarni to'ldirish uchun ehtiyotkorlik bilan foydalaning. Mavjud ma'lumotlar to'plamida ishga tushirilsa, u dublikatlarni yaratishi mumkin."
 }
