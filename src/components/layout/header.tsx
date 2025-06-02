@@ -42,18 +42,26 @@ export function Header({ searchTerm, onSearchChange, showSearch = false }: Heade
       // router.push("/"); // User is already on a page, no need to redirect immediately unless to a dashboard
     } catch (error: any) {
       console.error("Google Sign-In error:", error);
-      let errorMessage = t("loginErrorGeneric", "Failed to login with Google. Please try again.");
-      if (error.code === 'auth/account-exists-with-different-credential') {
-        errorMessage = t("loginErrorGoogleDiffCredential", "An account already exists with the same email address but different sign-in credentials. Try signing in with the original method.");
-      } else if (error.code === 'auth/popup-closed-by-user') {
-        errorMessage = t("loginErrorGooglePopupClosed", "Login cancelled. The Google sign-in popup was closed before completing.");
-      } else if (error.code === 'auth/popup-already-handled') {
-        errorMessage = t("loginErrorGooglePopupHandled", "Login process was already active. Please complete or cancel the existing login attempt.");
-      } else if (error.code === 'auth/cancelled-popup-request') {
+      
+      // Specific error handling
+      if (error.code === 'auth/popup-closed-by-user') {
+        console.log("Google Sign-In popup closed by user."); // Log for debugging, but no toast
+        return; 
+      }
+      if (error.code === 'auth/cancelled-popup-request') {
         // This can happen if multiple popups are triggered, just ignore or provide a mild notification
         console.warn("Login popup request cancelled, possibly due to another popup.");
         return; // Don't show a toast for this
       }
+
+      let errorMessage = t("loginErrorGeneric", "Failed to login with Google. Please try again.");
+      if (error.code === 'auth/account-exists-with-different-credential') {
+        errorMessage = t("loginErrorGoogleDiffCredential", "An account already exists with the same email address but different sign-in credentials. Try signing in with the original method.");
+      } else if (error.code === 'auth/popup-already-handled') {
+        errorMessage = t("loginErrorGooglePopupHandled", "Login process was already active. Please complete or cancel the existing login attempt.");
+      }
+      // Removed specific handling for 'auth/popup-closed-by-user' here as it's handled above
+
       toast({
         title: t("loginErrorTitle", "Login Failed"),
         description: errorMessage,
