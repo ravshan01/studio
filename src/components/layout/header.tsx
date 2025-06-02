@@ -10,8 +10,8 @@ import { useAuth } from "@/contexts/auth-context";
 import { auth } from "@/lib/firebase";
 import { signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { Waypoints, LogIn, LogOut, UserCircle } from "lucide-react"; // Removed UserPlus, SearchIcon
-import { Input } from "@/components/ui/input"; // SearchIcon was used with Input, but showSearch logic seems to be for main page, not this general header. Assuming Input can be removed if SearchIcon is.
+import { Waypoints, LogIn, LogOut, UserCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import {
   DropdownMenu,
@@ -39,15 +39,20 @@ export function Header({ searchTerm, onSearchChange, showSearch = false }: Heade
     try {
       await signInWithPopup(auth, provider);
       toast({ title: t("loginSuccessTitle", "Login Successful"), description: t("loginSuccessDesc", "Welcome!") });
-      router.push("/"); // Or to a specific dashboard page if needed
+      // router.push("/"); // User is already on a page, no need to redirect immediately unless to a dashboard
     } catch (error: any) {
       console.error("Google Sign-In error:", error);
       let errorMessage = t("loginErrorGeneric", "Failed to login with Google. Please try again.");
-      // Firebase provides specific error codes, e.g., 'auth/popup-closed-by-user'
       if (error.code === 'auth/account-exists-with-different-credential') {
         errorMessage = t("loginErrorGoogleDiffCredential", "An account already exists with the same email address but different sign-in credentials. Try signing in with the original method.");
       } else if (error.code === 'auth/popup-closed-by-user') {
         errorMessage = t("loginErrorGooglePopupClosed", "Login cancelled. The Google sign-in popup was closed before completing.");
+      } else if (error.code === 'auth/popup-already-handled') {
+        errorMessage = t("loginErrorGooglePopupHandled", "Login process was already active. Please complete or cancel the existing login attempt.");
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        // This can happen if multiple popups are triggered, just ignore or provide a mild notification
+        console.warn("Login popup request cancelled, possibly due to another popup.");
+        return; // Don't show a toast for this
       }
       toast({
         title: t("loginErrorTitle", "Login Failed"),
@@ -77,7 +82,7 @@ export function Header({ searchTerm, onSearchChange, showSearch = false }: Heade
 
       {showSearch && onSearchChange && (
         <div className="w-full max-w-xs md:max-w-sm lg:max-w-md relative mx-2 sm:mx-4">
-          <svg // Using inline SVG for search icon as SearchIcon from lucide was removed
+          <svg
             className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -124,10 +129,8 @@ export function Header({ searchTerm, onSearchChange, showSearch = false }: Heade
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button variant="ghost" size="sm" onClick={handleGoogleSignIn}>
-                <LogIn className="mr-1 sm:mr-2 h-4 w-4" />
-                <span className="hidden sm:inline">{t("loginWithGoogle", "Sign in with Google")}</span>
-                <span className="sm:hidden">{t("login", "Login")}</span> 
+              <Button variant="ghost" size="icon" onClick={handleGoogleSignIn} aria-label={t("loginWithGoogle", "Sign in with Google")}>
+                <LogIn className="h-5 w-5" />
               </Button>
             )}
           </>
