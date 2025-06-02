@@ -60,7 +60,7 @@ export function Header({ searchTerm, onSearchChange, showSearch = false }: Heade
       } else if (error.code === 'auth/popup-already-handled') {
         errorMessage = t("loginErrorGooglePopupHandled", "Login process was already active. Please complete or cancel the existing login attempt.");
       }
-      // Removed specific handling for 'auth/popup-closed-by-user' here as it's handled above
+      
 
       toast({
         title: t("loginErrorTitle", "Login Failed"),
@@ -85,7 +85,6 @@ export function Header({ searchTerm, onSearchChange, showSearch = false }: Heade
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex h-16 items-center justify-between px-6">
       <Link href="/" className="flex items-center gap-2 shrink-0">
         <Waypoints className="h-7 w-7 text-primary" />
-        <span className="font-bold text-lg hidden sm:inline">{t("appName", "ElectroCar Charging")}</span>
       </Link>
 
       {showSearch && onSearchChange && (
@@ -137,7 +136,12 @@ export function Header({ searchTerm, onSearchChange, showSearch = false }: Heade
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button variant="ghost" size="icon" onClick={handleGoogleSignIn} aria-label={t("loginWithGoogle", "Sign in with Google")}>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={handleGoogleSignIn} 
+                aria-label={t("loginWithGoogle", "Sign in with Google")}
+              >
                 <LogIn className="h-5 w-5" />
               </Button>
             )}
