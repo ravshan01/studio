@@ -2,7 +2,7 @@
 'use server';
 
 import { db } from '@/lib/firebase';
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, DocumentData, Timestamp } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, DocumentData, Timestamp, getDoc, query, where, documentId } from 'firebase/firestore';
 import type { Station, Port } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { mockStations } from '@/lib/station-data'; // Import mock stations
@@ -18,10 +18,11 @@ const processPortsForClient = (ports: any[]): Port[] => {
 };
 
 
-const stationFromDoc = (doc: DocumentData): Station => {
-  const data = doc.data();
+const stationFromDoc = (docSnap: DocumentData): Station => {
+  const data = docSnap.data();
+  if (!data) throw new Error(`No data for station ${docSnap.id}`);
   return {
-    id: doc.id,
+    id: docSnap.id,
     name: data.name,
     address: data.address,
     latitude: data.latitude,
@@ -45,12 +46,38 @@ export async function getStations(): Promise<Station[]> {
   }
 }
 
+export async function getStationsByIds(ids: string[]): Promise<Station[]> {
+  if (!ids || ids.length === 0) {
+    return [];
+  }
+  try {
+    // Firestore 'in' query has a limit of 30 items in the array.
+    // If you expect more than 30 favorite stations, you'll need to batch these requests.
+    // For now, assuming less than 30.
+    const stationsCol = collection(db, 'stations');
+    const q = query(stationsCol, where(documentId(), 'in', ids));
+    const stationSnapshot = await getDocs(q);
+    
+    const stationList = stationSnapshot.docs.map(docSnap => stationFromDoc(docSnap));
+    // The order of results from an 'in' query is not guaranteed.
+    // We might need to reorder them based on the original 'ids' array if order matters.
+    // For favorites, order might not be critical, or could be based on when they were added.
+    return stationList;
+  } catch (error) {
+    console.error("Error fetching stations by IDs: ", error);
+    throw new Error("Failed to fetch stations by IDs.");
+  }
+}
+
+
 export async function addStation(stationData: Omit<Station, 'id'>): Promise<Station> {
   try {
     const docRef = await addDoc(collection(db, 'stations'), stationData);
     revalidatePath('/admin/stations');
     revalidatePath('/');
-    return { ...stationData, id: docRef.id } as Station;
+    revalidatePath('/favorites');
+    const newDocSnap = await getDoc(docRef);
+    return stationFromDoc(newDocSnap);
   } catch (error) {
     console.error("Error adding station: ", error);
     throw new Error("Failed to add station.");
@@ -63,7 +90,8 @@ export async function updateStation(id: string, stationData: Partial<Omit<Statio
     await updateDoc(stationDoc, stationData);
     revalidatePath('/admin/stations');
     revalidatePath('/');
-     revalidatePath(`/admin/stations/${id}/edit`);
+    revalidatePath(`/admin/stations/${id}/edit`);
+    revalidatePath('/favorites');
   } catch (error) {
     console.error("Error updating station: ", error);
     throw new Error("Failed to update station.");
@@ -75,6 +103,7 @@ export async function deleteStation(id: string): Promise<void> {
     await deleteDoc(doc(db, 'stations', id));
     revalidatePath('/admin/stations');
     revalidatePath('/');
+    revalidatePath('/favorites');
   } catch (error) {
     console.error("Error deleting station: ", error);
     throw new Error("Failed to delete station.");
@@ -101,7 +130,8 @@ export async function bulkAddMockStations(): Promise<{ success: boolean; message
 
     if (importedCount > 0) {
       revalidatePath('/admin/stations');
-      revalidatePath('/'); // Revalidate main page as well
+      revalidatePath('/'); 
+      revalidatePath('/favorites');
     }
 
     if (errors.length > 0) {

@@ -113,5 +113,17 @@
   "addedToFavorites": "Sevimlilarga qo'shildi",
   "removedFromFavorites": "Sevimlilardan o'chirildi",
   "errorFavoriteAction": "Sevimlilarni yangilashda xatolik",
-  "myFavorites": "Mening Sevimlilarim"
+  "myFavorites": "Mening Sevimlilarim",
+  "myFavoritesTitle": "Mening Sevimli Stansiyalarim",
+  "noFavoritesTitle": "Hozircha Sevimli Stansiyalar Yo'q",
+  "noFavoritesMessage": "Siz hali sevimlilaringizga hech qanday stansiya qo'shmadingiz. Xaritani o'rganishni boshlang!",
+  "viewOnMapButton": "Xaritada Ko'rish",
+  "removeFromFavoritesHere": "Sevimlilardan o'chirish",
+  "remove": "O'chirish",
+  "loadingFavorites": "Sevimlilaringiz yuklanmoqda...",
+  "exploreMap": "Xaritani Ko'rish",
+  "loginRequiredTitle": "Kirish Talab Qilinadi",
+  "loginRequiredForFavoritesDesc": "Sevimlilaringizni ko'rish uchun tizimga kiring.",
+  "accessDenied": "Ruxsat Rad Etildi",
+  "viewOnMap": "Xaritada Ko'rish"
 }

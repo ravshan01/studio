@@ -113,5 +113,17 @@
   "addedToFavorites": "Добавлено в избранное",
   "removedFromFavorites": "Удалено из избранного",
   "errorFavoriteAction": "Ошибка при обновлении избранного",
-  "myFavorites": "Мои избранные"
+  "myFavorites": "Мои избранные",
+  "myFavoritesTitle": "Мои избранные станции",
+  "noFavoritesTitle": "Избранных станций пока нет",
+  "noFavoritesMessage": "Вы еще не добавили ни одной станции в избранное. Начните исследовать карту!",
+  "viewOnMapButton": "Показать на карте",
+  "removeFromFavoritesHere": "Удалить из избранного",
+  "remove": "Удалить",
+  "loadingFavorites": "Загрузка ваших избранных станций...",
+  "exploreMap": "Искать на карте",
+  "loginRequiredTitle": "Требуется вход",
+  "loginRequiredForFavoritesDesc": "Пожалуйста, войдите в систему, чтобы просмотреть избранное.",
+  "accessDenied": "Доступ запрещен",
+  "viewOnMap": "Показать на карте"
 }

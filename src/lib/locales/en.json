@@ -113,5 +113,17 @@
   "addedToFavorites": "Added to Favorites",
   "removedFromFavorites": "Removed from Favorites",
   "errorFavoriteAction": "Error updating favorites",
-  "myFavorites": "My Favorites"
+  "myFavorites": "My Favorites",
+  "myFavoritesTitle": "My Favorite Stations",
+  "noFavoritesTitle": "No Favorites Yet",
+  "noFavoritesMessage": "You haven't added any stations to your favorites. Start exploring the map!",
+  "viewOnMapButton": "View on Map",
+  "removeFromFavoritesHere": "Remove from favorites",
+  "remove": "Remove",
+  "loadingFavorites": "Loading your favorites...",
+  "exploreMap": "Explore Map",
+  "loginRequiredTitle": "Login Required",
+  "loginRequiredForFavoritesDesc": "Please log in to view your favorites.",
+  "accessDenied": "Access Denied",
+  "viewOnMap": "View on Map"
 }

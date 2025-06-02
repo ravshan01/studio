@@ -10,7 +10,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { auth } from "@/lib/firebase";
 import { signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { Waypoints, LogIn, LogOut, UserCircle } from "lucide-react";
+import { Waypoints, LogIn, LogOut, UserCircle, Heart } from "lucide-react"; // Added Heart
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -39,19 +39,16 @@ export function Header({ searchTerm, onSearchChange, showSearch = false }: Heade
     try {
       await signInWithPopup(auth, provider);
       toast({ title: t("loginSuccessTitle", "Login Successful"), description: t("loginSuccessDesc", "Welcome!") });
-      // router.push("/"); // User is already on a page, no need to redirect immediately unless to a dashboard
     } catch (error: any) {
       console.error("Google Sign-In error:", error);
       
-      // Specific error handling
       if (error.code === 'auth/popup-closed-by-user') {
-        console.log("Google Sign-In popup closed by user."); // Log for debugging, but no toast
+        console.log("Google Sign-In popup closed by user.");
         return; 
       }
       if (error.code === 'auth/cancelled-popup-request') {
-        // This can happen if multiple popups are triggered, just ignore or provide a mild notification
         console.warn("Login popup request cancelled, possibly due to another popup.");
-        return; // Don't show a toast for this
+        return; 
       }
 
       let errorMessage = t("loginErrorGeneric", "Failed to login with Google. Please try again.");
@@ -61,7 +58,6 @@ export function Header({ searchTerm, onSearchChange, showSearch = false }: Heade
         errorMessage = t("loginErrorGooglePopupHandled", "Login process was already active. Please complete or cancel the existing login attempt.");
       }
       
-
       toast({
         title: t("loginErrorTitle", "Login Failed"),
         description: errorMessage,
@@ -129,6 +125,11 @@ export function Header({ searchTerm, onSearchChange, showSearch = false }: Heade
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel className="truncate max-w-[200px]">{user.displayName || user.email}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => router.push('/favorites')}>
+                    <Heart className="mr-2 h-4 w-4" />
+                    {t("myFavorites", "My Favorites")}
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
