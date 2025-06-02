@@ -103,6 +103,7 @@
   "signUpSuccessDesc": "Xush kelibsiz! Endi tizimga kirishingiz mumkin.",
   "signUpErrorGeneric": "Hisob yaratishda xatolik. Iltimos, qayta urinib ko'ring.",
   "signUpErrorEmailInUse": "Ushbu elektron pochta allaqachon ro'yxatdan o'tgan.",
+  "signUpErrorAuthConfigNotFound": "Firebase'da Email/parol orqali kirish yoqilmagan. Iltimos, administratorga murojaat qiling yoki Firebase konsoli konfiguratsiyasini tekshiring.",
   "signUpErrorTitle": "Ro'yxatdan o'tishda xatolik",
   "creatingAccount": "Hisob yaratilmoqda...",
   "emailRequired": "Elektron pochta manzili talab qilinadi.",

@@ -57,6 +57,8 @@ export default function UserSignUpPage() {
         errorMessage = t("signUpErrorEmailInUse", "This email is already registered.");
       } else if (error.code === 'auth/weak-password') {
         errorMessage = t("passwordMinLength", "Password should be at least 6 characters.");
+      } else if (error.code === 'auth/configuration-not-found') {
+        errorMessage = t("signUpErrorAuthConfigNotFound", "Email/Password sign-in is not enabled in Firebase. Please contact the administrator or check Firebase console configuration.");
       }
       toast({
         title: t("signUpErrorTitle", "Sign Up Failed"),

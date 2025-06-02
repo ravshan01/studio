@@ -103,6 +103,7 @@
   "signUpSuccessDesc": "Welcome! You can now log in.",
   "signUpErrorGeneric": "Failed to create account. Please try again.",
   "signUpErrorEmailInUse": "This email is already registered.",
+  "signUpErrorAuthConfigNotFound": "Email/Password sign-in is not enabled in Firebase. Please contact the administrator or check Firebase console configuration.",
   "signUpErrorTitle": "Sign Up Failed",
   "creatingAccount": "Creating Account...",
   "emailRequired": "Email is required.",
