@@ -90,6 +90,7 @@
   "loginErrorGeneric": "Kirishda xatolik. Iltimos, qayta urinib ko'ring.",
   "loginErrorGoogleDiffCredential": "Ushbu elektron pochta manzili bilan hisob qaydnomasi allaqachon mavjud, ammo boshqa kirish ma'lumotlari bilan. Asl usul bilan kirishga harakat qilib ko'ring.",
   "loginErrorGooglePopupClosed": "Kirish bekor qilindi. Google orqali kirish oynasi tugallanmasdan yopildi.",
+  "loginErrorGooglePopupHandled": "Kirish jarayoni allaqachon faol edi. Iltimos, mavjud kirish urinishini yakunlang yoki bekor qiling.",
   "loginErrorTitle": "Kirishda xatolik",
   "userMenu": "Foydalanuvchi menyusi",
   "profile": "Profil",
@@ -106,5 +107,11 @@
   "bulkImportPartialFailTitle": "Ommaviy importda muammo",
   "bulkImportErrorTitle": "Ommaviy importda xatolik",
   "bulkImportErrorsCount": "Xatolar: {count}",
-  "bulkImportWarning": "Ogohlantirish: Ushbu xususiyatdan dastlabki ma'lumotlarni to'ldirish uchun ehtiyotkorlik bilan foydalaning. Mavjud ma'lumotlar to'plamida ishga tushirilsa, u dublikatlarni yaratishi mumkin."
+  "bulkImportWarning": "Ogohlantirish: Ushbu xususiyatdan dastlabki ma'lumotlarni to'ldirish uchun ehtiyotkorlik bilan foydalaning. Mavjud ma'lumotlar to'plamida ishga tushirilsa, u dublikatlarni yaratishi mumkin.",
+  "addToFavorites": "Sevimlilarga qo'shish",
+  "removeFromFavorites": "Sevimlilardan o'chirish",
+  "addedToFavorites": "Sevimlilarga qo'shildi",
+  "removedFromFavorites": "Sevimlilardan o'chirildi",
+  "errorFavoriteAction": "Sevimlilarni yangilashda xatolik",
+  "myFavorites": "Mening Sevimlilarim"
 }

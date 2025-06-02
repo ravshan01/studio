@@ -90,6 +90,7 @@
   "loginErrorGeneric": "Failed to login. Please try again.",
   "loginErrorGoogleDiffCredential": "An account already exists with the same email address but different sign-in credentials. Try signing in with the original method.",
   "loginErrorGooglePopupClosed": "Login cancelled. The Google sign-in popup was closed before completing.",
+  "loginErrorGooglePopupHandled": "Login process was already active. Please complete or cancel the existing login attempt.",
   "loginErrorTitle": "Login Failed",
   "userMenu": "User Menu",
   "profile": "Profile",
@@ -106,5 +107,11 @@
   "bulkImportPartialFailTitle": "Bulk Import Issue",
   "bulkImportErrorTitle": "Bulk Import Failed",
   "bulkImportErrorsCount": "Errors: {count}",
-  "bulkImportWarning": "Warning: Use this feature carefully for initial data population. It may create duplicates if run on an existing dataset."
+  "bulkImportWarning": "Warning: Use this feature carefully for initial data population. It may create duplicates if run on an existing dataset.",
+  "addToFavorites": "Add to Favorites",
+  "removeFromFavorites": "Remove from Favorites",
+  "addedToFavorites": "Added to Favorites",
+  "removedFromFavorites": "Removed from Favorites",
+  "errorFavoriteAction": "Error updating favorites",
+  "myFavorites": "My Favorites"
 }

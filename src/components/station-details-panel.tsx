@@ -16,7 +16,11 @@ import { useLanguage } from "@/contexts/language-context";
 import { StationTypeIcon } from "@/components/icons/station-type-icon";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Globe, Clock, Settings, Zap, Tag, MapPin, PowerIcon, Navigation } from "lucide-react";
+import { Globe, Clock, Settings, Zap, Tag, MapPin, PowerIcon, Navigation, Heart } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
+import { addStationToFavorites, removeStationFromFavorites } from "@/app/actions/userActions";
+import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from "react";
 
 interface StationDetailsPanelProps {
   station: Station | null;
@@ -40,6 +44,18 @@ const getStatusBadgeVariant = (status: Port["status"]): "default" | "secondary" 
 
 export function StationDetailsPanel({ station, isOpen, onClose }: StationDetailsPanelProps) {
   const { t } = useLanguage();
+  const { user, favoriteStationIds, addFavoriteId, removeFavoriteId: removeFavoriteIdFromContext } = useAuth();
+  const { toast } = useToast();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
+
+  useEffect(() => {
+    if (station && user) {
+      setIsFavorite(favoriteStationIds.includes(station.id));
+    } else {
+      setIsFavorite(false);
+    }
+  }, [station, user, favoriteStationIds]);
 
   if (!station) return null;
 
@@ -49,20 +65,61 @@ export function StationDetailsPanel({ station, isOpen, onClose }: StationDetails
     window.open(mapsUrl, '_blank', 'noopener,noreferrer');
   };
 
+  const handleToggleFavorite = async () => {
+    if (!user || !station) return;
+    setIsTogglingFavorite(true);
+    try {
+      if (isFavorite) {
+        await removeStationFromFavorites(user.uid, station.id);
+        removeFavoriteIdFromContext(station.id);
+        toast({ title: t("removedFromFavorites", "Removed from Favorites") });
+      } else {
+        await addStationToFavorites(user.uid, station.id);
+        addFavoriteId(station.id);
+        toast({ title: t("addedToFavorites", "Added to Favorites") });
+      }
+      // No need to call setIsFavorite here as it's driven by the useEffect watching favoriteStationIds
+    } catch (error) {
+      toast({
+        title: t("errorFavoriteAction", "Error updating favorites"),
+        description: String(error),
+        variant: "destructive",
+      });
+    }
+    setIsTogglingFavorite(false);
+  };
+
+
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <SheetContent className="w-full md:max-w-md p-0 flex flex-col" side="right">
         <SheetHeader className="p-6 pb-4 border-b">
-          <SheetTitle className="flex items-center gap-3 text-xl">
-            <StationTypeIcon type={station.type} className="h-7 w-7 text-primary" />
-            {station.name}
-          </SheetTitle>
-          {station.address && (
-            <SheetDescription className="flex items-start gap-2 text-sm pt-1">
-              <MapPin className="h-4 w-4 mt-0.5 shrink-0"/>
-              <span>{station.address}</span>
-            </SheetDescription>
-          )}
+          <div className="flex justify-between items-start">
+            <div className="flex-grow">
+              <SheetTitle className="flex items-center gap-3 text-xl">
+                <StationTypeIcon type={station.type} className="h-7 w-7 text-primary" />
+                {station.name}
+              </SheetTitle>
+              {station.address && (
+                <SheetDescription className="flex items-start gap-2 text-sm pt-1">
+                  <MapPin className="h-4 w-4 mt-0.5 shrink-0"/>
+                  <span>{station.address}</span>
+                </SheetDescription>
+              )}
+            </div>
+            {user && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleToggleFavorite}
+                disabled={isTogglingFavorite}
+                aria-label={isFavorite ? t("removeFromFavorites", "Remove from Favorites") : t("addToFavorites", "Add to Favorites")}
+                className="ml-2 shrink-0"
+              >
+                <Heart className={`h-6 w-6 ${isFavorite ? "fill-red-500 text-red-500" : "text-muted-foreground"}`} />
+              </Button>
+            )}
+          </div>
         </SheetHeader>
         
         <ScrollArea className="flex-grow">
@@ -73,7 +130,7 @@ export function StationDetailsPanel({ station, isOpen, onClose }: StationDetails
                 <Globe className="h-5 w-5 text-muted-foreground self-center"/>
                 <div className="flex flex-col">
                     <span className="font-medium text-foreground">{t("type", "Type")}</span>
-                    <span className="text-muted-foreground">{t(station.type)}</span>
+                    <span className="text-muted-foreground">{t(station.type, station.type)}</span>
                 </div>
 
                 {station.operator && (
