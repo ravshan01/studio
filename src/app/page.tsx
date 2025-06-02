@@ -7,7 +7,8 @@ import { MapView } from "@/components/map/map-view";
 import { StationDetailsPanel } from "@/components/station-details-panel";
 import type { Station, StationType } from "@/types";
 import { useSelectedStation } from "@/contexts/selected-station-context";
-import { getStations } from "@/app/actions/stationActions"; // Import the server action
+// import { getStations } from "@/app/actions/stationActions"; // Comment out Firestore fetching
+import { mockStations } from "@/lib/station-data"; // Import mock data
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/language-context";
 
@@ -18,31 +19,32 @@ export default function HomePage() {
   const { toast } = useToast();
   const { t } = useLanguage();
   
-  const [allStations, setAllStations] = useState<Station[]>([]);
+  const [allStations, setAllStations] = useState<Station[]>(mockStations); // Use mock stations directly
   const [displayedStations, setDisplayedStations] = useState<Station[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); // Set to false as mock data is loaded synchronously
   const [selectedTypeFilter, setSelectedTypeFilter] = useState<StationType | "all">("all");
 
 
-  useEffect(() => {
-    async function loadStations() {
-      setIsLoading(true);
-      try {
-        const stationsFromDb = await getStations();
-        setAllStations(stationsFromDb);
-      } catch (error) {
-        console.error("Failed to load stations:", error);
-        toast({
-          title: t("errorFetchingStations", "Error fetching stations"),
-          description: (error as Error).message,
-          variant: "destructive",
-        });
-        setAllStations([]); // Set to empty array on error
-      }
-      setIsLoading(false);
-    }
-    loadStations();
-  }, [toast, t]);
+  // useEffect(() => {
+  //   async function loadStations() {
+  //     setIsLoading(true);
+  //     try {
+  //       const stationsFromDb = await getStations();
+  //       setAllStations(stationsFromDb);
+  //     } catch (error) {
+  //       console.error("Failed to load stations:", error);
+  //       toast({
+  //         title: t("errorFetchingStations", "Error fetching stations"),
+  //         description: (error as Error).message,
+  //         variant: "destructive",
+  //       });
+  //       setAllStations([]); // Set to empty array on error
+  //     }
+  //     setIsLoading(false);
+  //   }
+  //   loadStations();
+  // }, [toast, t]);
+  // Mock data is loaded directly, so no need for the above useEffect for fetching
 
   useEffect(() => {
     const lowerSearchTerm = searchTerm.toLowerCase();
