@@ -1,5 +1,32 @@
 
-"use client";
+.name.toLowerCase().includes(lowerSearchTerm) ||
+        (station.address || "").toLowerCase().includes(lowerSearchTerm)
+      )
+    );
+  }, [searchTerm, stations]);
+
+  const handleAddStation = () => {
+    setEditingStation(null);
+    setIsFormOpen(true);
+  };
+
+  const handleEditStation = (station: Station) => {
+    setEditingStation(station);
+    setIsFormOpen(true);
+  };
+
+  const handleDeleteStation = async (stationId: string) => {
+    setIsDeleting(true);
+    try {
+      await deleteStation(stationId);
+      toast({ title: t("stationDeleted", "Station deleted successfully") });
+      await loadStations();
+      if (editingStation?.id === stationId) {
+        setIsFormOpen(false);
+        setEditingStation(null);
+      }
+    } catch (error) {
+      toast("use client";
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -59,34 +86,7 @@ export default function AdminStationsPage() {
     const lowerSearchTerm = searchTerm.toLowerCase();
     setFilteredStations(
       stations.filter(station =>
-        station.name.toLowerCase().includes(lowerSearchTerm) ||
-        (station.address || "").toLowerCase().includes(lowerSearchTerm)
-      )
-    );
-  }, [searchTerm, stations]);
-
-  const handleAddStation = () => {
-    setEditingStation(null);
-    setIsFormOpen(true);
-  };
-
-  const handleEditStation = (station: Station) => {
-    setEditingStation(station);
-    setIsFormOpen(true);
-  };
-
-  const handleDeleteStation = async (stationId: string) => {
-    setIsDeleting(true);
-    try {
-      await deleteStation(stationId);
-      toast({ title: t("stationDeleted", "Station deleted successfully") });
-      await loadStations();
-      if (editingStation?.id === stationId) {
-        setIsFormOpen(false);
-        setEditingStation(null);
-      }
-    } catch (error) {
-      toast({ title: t("errorDeletingStation", "Error deleting station"), description: String(error), variant: "destructive" });
+        station{ title: t("errorDeletingStation", "Error deleting station"), description: String(error), variant: "destructive" });
     }
     setIsDeleting(false);
   };
